@@ -1,0 +1,12 @@
+{
+    "files": [
+        "mainwindow.py",
+        "form.ui",
+        "src.qrc",
+        "ui_src.py",
+        "ui_form.py",
+        "mainmenu.ui",
+        "menu.py",
+        "ui_mainmenu.py"
+    ]
+}
