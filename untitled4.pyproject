@@ -8,6 +8,7 @@
         "mainmenu.ui",
         "menu.py",
         "ui_mainmenu.py",
-        "tambahdata.ui"
+        "tambahdata.ui",
+        "password.ui"
     ]
 }
