@@ -1,31 +1,37 @@
 <RCC>
-  <qresource prefix="/bg">
-    <file>START 1.png</file>
-    <file>MONITORING KUNCI BRANKAS.png</file>
-  </qresource>
-  <qresource prefix="tambahdata">
-    <file>Group 3tambahdata.png</file>
-    <file>TAMBAH DATA.png</file>
-    <file>Nama.png</file>
-    <file>Ambil Gambar.png</file>
-    <file>Group 1 (1).png</file>
-    <file>reset 1.png</file>
-    <file>add-group (1) 1.png</file>
-  </qresource>
-  <qresource prefix="/button">
-    <file>STARTa.png</file>
-    <file>SHUT DOWNa.png</file>
-    <file>START2.png</file>
-    <file>sutdonrill.png</file>
-    <file>startril.png</file>
-  </qresource>
-  <qresource prefix="/menu">
-    <file>Group 2.png</file>
-    <file>Group 3.png</file>
-    <file>Group 4.png</file>
-    <file>Group 5.png</file>
-    <file>Group 1.png</file>
-    <file>START(2) 1.png</file>
-    <file>arrow 1.png</file>
-  </qresource>
+    <qresource prefix="/bg">
+        <file>START 1.png</file>
+        <file>MONITORING KUNCI BRANKAS.png</file>
+    </qresource>
+    <qresource prefix="/tambahdata">
+        <file>Group 3tambahdata.png</file>
+        <file>TAMBAH DATA.png</file>
+        <file>Nama.png</file>
+        <file>Ambil Gambar.png</file>
+        <file>Group 1 (1).png</file>
+        <file>reset 1.png</file>
+        <file>add-group (1) 1.png</file>
+    </qresource>
+    <qresource prefix="/button">
+        <file>STARTa.png</file>
+        <file>SHUT DOWNa.png</file>
+        <file>START2.png</file>
+        <file>sutdonrill.png</file>
+        <file>startril.png</file>
+    </qresource>
+    <qresource prefix="/menu">
+        <file>Group 2.png</file>
+        <file>Group 3.png</file>
+        <file>Group 4.png</file>
+        <file>Group 5.png</file>
+        <file>Group 1.png</file>
+        <file>START(2) 1.png</file>
+        <file>arrow 1.png</file>
+    </qresource>
+    <qresource prefix="/password">
+        <file>Rectangle 2submit.png</file>
+        <file>Rectangle 1.png</file>
+        <file>Password.png</file>
+        <file>arrow 1.png</file>
+    </qresource>
 </RCC>
