@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Password</class>
- <widget class="QMainWindow" name="Password">
+ <class>Log</class>
+ <widget class="QMainWindow" name="Log">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -34,8 +34,8 @@ background-repeat: false;</string>
     <property name="geometry">
      <rect>
       <x>30</x>
-      <y>0</y>
-      <width>71</width>
+      <y>10</y>
+      <width>81</width>
       <height>81</height>
      </rect>
     </property>
@@ -48,52 +48,33 @@ border-radius: 10;</string>
      <string/>
     </property>
    </widget>
-   <widget class="QLabel" name="label">
+   <widget class="QWidget" name="widget" native="true">
     <property name="geometry">
      <rect>
-      <x>340</x>
-      <y>180</y>
-      <width>341</width>
-      <height>61</height>
+      <x>330</x>
+      <y>10</y>
+      <width>361</width>
+      <height>91</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">background-image: url(:/password/Password.png);
-background-repea: false;</string>
-    </property>
-    <property name="text">
-     <string/>
+     <string notr="true">background-image: url(:/password/Rectangle 2 log.png);
+background-repeat: false;</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_2">
+   <widget class="QTableView" name="tableView">
     <property name="geometry">
      <rect>
-      <x>440</x>
-      <y>380</y>
-      <width>141</width>
-      <height>51</height>
+      <x>150</x>
+      <y>190</y>
+      <width>561</width>
+      <height>231</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">background-image: url(:/password/Rectangle 2submit.png);
-background-repeat:false;
-border-radius: 10;</string>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="lineEdit">
-    <property name="geometry">
-     <rect>
-      <x>280</x>
-      <y>300</y>
-      <width>491</width>
-      <height>51</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">background-color: rgb(170, 0, 0);</string>
+     <string notr="true">background-color: rgb(255,255,255);
+gridline-color:  rgb(255, 255, 255);
+color: rgb(0,0,0);</string>
     </property>
    </widget>
   </widget>
