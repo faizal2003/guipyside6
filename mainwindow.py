@@ -146,11 +146,6 @@ data_list = [
 (1, "yanto", "12 januari 25/ 11:11:11", "login"),
 (2, "agus sedunia", "25 januari 25/12:12:12", "login"),
 (2, "agus sedunia", "25 januari 25/12:12:12", "login"),
-(2, "agus sedunia", "25 januari 25/12:12:12", "login"),
-(2, "agus sedunia", "25 januari 25/12:12:12", "login"),
-(2, "agus sedunia", "25 januari 25/12:12:12", "login"),
-(2, "agus sedunia", "25 januari 25/12:12:12", "login"),
-(2, "agus sedunia", "25 januari 25/12:12:12", "login"),
 ]
 
 
