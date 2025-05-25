@@ -1,4 +1,7 @@
 # This Python file uses the following encoding: utf-8
+import cv2
+import os
+from datetime import datetime
 import sys
 import ui_src
 from PySide6.QtCore import *
@@ -53,17 +56,253 @@ class SecondWindow(QMainWindow):
         print("button shut down pressed")
         widget.setCurrentIndex(widget.currentIndex() + 1)
 
+# class TambahData(QMainWindow):
+#     def __init__(self, parent=None):
+#         super().__init__(parent)
+#         self.ui = Ui_TambahData()
+#         self.ui.setupUi(self)
+#         self.ui.pushButton.pressed.connect(self.back_action)
+
+#     def back_action(self):
+#         print("button start pressed")
+#         widget.setCurrentIndex(widget.currentIndex() - 1)
+
+#     def testshutdown(self):
+#         print("button shut down pressed")
+
 class TambahData(QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.ui = Ui_TambahData()
         self.ui.setupUi(self)
+        
+        # Connect buttons
         self.ui.pushButton.pressed.connect(self.back_action)
-
+        self.ui.pushButton_2.pressed.connect(self.capture_photo)  # CAPTURE button
+        self.ui.pushButton_3.pressed.connect(self.save_photo)     # SELESAI button
+        self.ui.pushButton_4.pressed.connect(self.reset_camera)   # RESET button
+        
+        # Camera setup
+        self.camera = None
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.update_frame)
+        self.captured_frame = None
+        self.is_capturing = False
+        self.camera_initialized = False
+        
+        # Find the camera display area (assuming it's a QLabel in your UI)
+        # You may need to adjust this based on your actual UI structure
+        self.camera_label = None
+        self.setup_camera_display()
+    
+    def showEvent(self, event):
+        """Handle when window is shown - restart camera"""
+        super().showEvent(event)
+        if not self.camera_initialized or not self.camera or not self.camera.isOpened():
+            print("Window shown - initializing camera")
+            self.init_camera()
+    
+    def hideEvent(self, event):
+        """Handle when window is hidden - stop camera"""
+        super().hideEvent(event)
+        print("Window hidden - stopping camera")
+        self.cleanup_camera()
+    
+    def setup_camera_display(self):
+        """Setup the camera display area"""
+        # If you have a specific QLabel for camera in your UI, use it
+        # Otherwise, we'll look for a suitable widget or create one
+        
+        # Try to find existing label for camera display
+        # Adjust this based on your UI structure
+        if hasattr(self.ui, 'label_camera'):
+            self.camera_label = self.ui.label_camera
+        else:
+            # Create a new label for camera display if not exists
+            # You might need to adjust the parent and positioning
+            self.camera_label = QLabel(self)
+            self.camera_label.setGeometry(332, 190, 650, 400)  # Adjust based on your red area
+            self.camera_label.setStyleSheet("border: 2px solid red; background-color: black;")
+        
+        self.camera_label.setAlignment(Qt.AlignCenter)
+        self.camera_label.setScaledContents(True)
+        self.camera_label.setText("Camera Loading...")
+    
+    def init_camera(self):
+        """Initialize the camera"""
+        try:
+            # Clean up existing camera first
+            if self.camera and self.camera.isOpened():
+                self.camera.release()
+            
+            # Add small delay to ensure camera is released
+            import time
+            time.sleep(0.1)
+            
+            self.camera = cv2.VideoCapture(0)  # Use default camera
+            if not self.camera.isOpened():
+                raise Exception("Could not open camera")
+            
+            # Set camera resolution
+            self.camera.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
+            self.camera.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
+            
+            # Start camera feed
+            self.timer.start(30)  # Update every 30ms
+            self.is_capturing = True
+            self.camera_initialized = True
+            
+            print("Camera initialized successfully")
+            
+        except Exception as e:
+            print(f"Camera initialization error: {e}")
+            self.camera_label.setText(f"Camera Error: {str(e)}")
+            self.camera_initialized = False
+            # QMessageBox.warning(self, "Camera Error", f"Failed to initialize camera: {str(e)}")
+    
+    def update_frame(self):
+        """Update camera frame"""
+        if self.camera and self.camera.isOpened() and self.is_capturing:
+            ret, frame = self.camera.read()
+            if ret:
+                # Convert frame to QImage and display
+                rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                h, w, ch = rgb_frame.shape
+                bytes_per_line = ch * w
+                qt_image = QImage(rgb_frame.data, w, h, bytes_per_line, QImage.Format_RGB888)
+                
+                # Scale image to fit label
+                pixmap = QPixmap.fromImage(qt_image)
+                scaled_pixmap = pixmap.scaled(self.camera_label.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
+                self.camera_label.setPixmap(scaled_pixmap)
+    
+    def capture_photo(self):
+        """Capture current frame"""
+        print("Capture button pressed")
+        if self.camera and self.camera.isOpened():
+            ret, frame = self.camera.read()
+            if ret:
+                self.captured_frame = frame.copy()
+                self.is_capturing = False  # Stop live feed
+                
+                # Display captured image
+                rgb_frame = cv2.cvtColor(self.captured_frame, cv2.COLOR_BGR2RGB)
+                h, w, ch = rgb_frame.shape
+                bytes_per_line = ch * w
+                qt_image = QImage(rgb_frame.data, w, h, bytes_per_line, QImage.Format_RGB888)
+                
+                pixmap = QPixmap.fromImage(qt_image)
+                scaled_pixmap = pixmap.scaled(self.camera_label.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
+                self.camera_label.setPixmap(scaled_pixmap)
+                
+                print("Photo captured successfully")
+            else:
+                QMessageBox.warning(self, "Capture Error", "Failed to capture photo")
+        else:
+            QMessageBox.warning(self, "Camera Error", "Camera not available")
+    
+    def save_photo(self):
+        """Save captured photo in folder named from textEdit"""
+        print("Selesai button pressed")
+        if self.captured_frame is None:
+            QMessageBox.warning(self, "Save Error", "No photo captured. Please capture a photo first.")
+            return
+        
+        # Get name from textEdit
+        name = self.ui.textEdit.toPlainText().strip()
+        if not name:
+            QMessageBox.warning(self, "Save Error", "Please enter a name before saving.")
+            return
+        
+        try:
+            # Create folder with the name from textEdit
+            folder_path = os.path.join("photos", name)
+            if not os.path.exists(folder_path):
+                os.makedirs(folder_path)
+            
+            # Generate filename with timestamp
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            filename = f"{name}_{timestamp}.jpg"
+            filepath = os.path.join(folder_path, filename)
+            
+            # Save the photo
+            success = cv2.imwrite(filepath, self.captured_frame)
+            
+            if success:
+                QMessageBox.information(self, "Save Success", f"Photo saved in folder '{name}' as: {filename}")
+                print(f"Photo saved: {filepath}")
+                
+                # Optionally clear the form after saving
+                # self.ui.textEdit.clear()
+                self.reset_camera()
+            else:
+                QMessageBox.critical(self, "Save Error", "Failed to save photo")
+                
+        except Exception as e:
+            print(f"Save error: {e}")
+            QMessageBox.critical(self, "Save Error", f"Error saving photo: {str(e)}")
+    
+    def reset_camera(self):
+        """Reset camera to live feed"""
+        print("Reset button pressed")
+        self.captured_frame = None
+        
+        # Clear name field
+        # self.ui.textEdit.clear()
+        
+        # Always cleanup and reinitialize for reset
+        self.cleanup_camera()
+        
+        # Add delay before reinitializing
+        import time
+        time.sleep(0.2)
+        
+        # Reinitialize camera
+        self.init_camera()
+        
+        print("Camera reset completed")
+    
     def back_action(self):
-        print("button start pressed")
+        """Handle back button"""
+        print("Back button pressed")
+        # Stop camera when leaving the window
+        self.cleanup_camera()
         widget.setCurrentIndex(widget.currentIndex() - 1)
-
+    
+    def cleanup_camera(self):
+        """Clean up camera resources"""
+        print("Cleaning up camera resources")
+        
+        # Stop timer first
+        if self.timer.isActive():
+            self.timer.stop()
+        
+        # Set flags to stop capturing
+        self.is_capturing = False
+        
+        # Release camera with proper cleanup
+        if self.camera and self.camera.isOpened():
+            self.camera.release()
+            print("Camera released")
+        
+        # Set camera to None to ensure clean state
+        self.camera = None
+        self.camera_initialized = False
+        
+        # Clear the display
+        if self.camera_label:
+            self.camera_label.clear()
+            self.camera_label.setText("Camera Stopped")
+        
+        # Force garbage collection to ensure cleanup
+        import gc
+        gc.collect()
+    
+    def closeEvent(self, event):
+        """Handle window close event"""
+        self.cleanup_camera()
+        super().closeEvent(event)
+    
     def testshutdown(self):
         print("button shut down pressed")
 

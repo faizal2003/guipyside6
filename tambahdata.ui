@@ -163,6 +163,19 @@ background-repeat:false;
     <property name="styleSheet">
      <string notr="true">background-color: rgb(170, 0, 0);</string>
     </property>
+    <widget class="QLabel" name="label_camera">
+     <property name="geometry">
+      <rect>
+       <x>5</x>
+       <y>7</y>
+       <width>641</width>
+       <height>331</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -171,7 +184,7 @@ background-repeat:false;
      <x>0</x>
      <y>0</y>
      <width>1024</width>
-     <height>21</height>
+     <height>23</height>
     </rect>
    </property>
   </widget>

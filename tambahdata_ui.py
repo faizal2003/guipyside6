@@ -74,10 +74,13 @@ class Ui_TambahData(object):
         self.widget.setObjectName(u"widget")
         self.widget.setGeometry(QRect(330, 190, 651, 341))
         self.widget.setStyleSheet(u"background-color: rgb(170, 0, 0);")
+        self.label_camera = QLabel(self.widget)
+        self.label_camera.setObjectName(u"label_camera")
+        self.label_camera.setGeometry(QRect(5, 7, 641, 331))
         TambahData.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(TambahData)
         self.menubar.setObjectName(u"menubar")
-        self.menubar.setGeometry(QRect(0, 0, 1024, 21))
+        self.menubar.setGeometry(QRect(0, 0, 1024, 23))
         TambahData.setMenuBar(self.menubar)
         self.statusbar = QStatusBar(TambahData)
         self.statusbar.setObjectName(u"statusbar")
@@ -96,5 +99,6 @@ class Ui_TambahData(object):
         self.pushButton_4.setText("")
         self.label.setText("")
         self.label_2.setText("")
+        self.label_camera.setText("")
     # retranslateUi
 
