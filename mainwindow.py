@@ -56,19 +56,6 @@ class SecondWindow(QMainWindow):
         print("button shut down pressed")
         widget.setCurrentIndex(widget.currentIndex() + 1)
 
-# class TambahData(QMainWindow):
-#     def __init__(self, parent=None):
-#         super().__init__(parent)
-#         self.ui = Ui_TambahData()
-#         self.ui.setupUi(self)
-#         self.ui.pushButton.pressed.connect(self.back_action)
-
-#     def back_action(self):
-#         print("button start pressed")
-#         widget.setCurrentIndex(widget.currentIndex() - 1)
-
-#     def testshutdown(self):
-#         print("button shut down pressed")
 
 class TambahData(QMainWindow):
     def __init__(self, parent=None):
@@ -340,11 +327,16 @@ class LogWindow(QMainWindow):
         table_model = MyTableModel(self, data_list, header)
         self.ui.tableView.setModel(table_model)
         font = QFont("Courier New", 20, QFont.Bold)
+        self.ui.pushButton.pressed.connect(self.back_action)
         self.ui.tableView.setFont(font)
         self.ui.tableView.setFixedSize(700, 450)
         self.ui.tableView.resizeColumnsToContents()
         # self.ui.tableView.setSortingEnabled(True)
         
+    def back_action(self):
+        print("button start pressed")
+        widget.setCurrentIndex(widget.currentIndex() - 3)
+    
 class MyTableModel(QAbstractTableModel):
     def __init__(self, parent, mylist, header, *args):
         QAbstractTableModel.__init__(self, parent, *args)
