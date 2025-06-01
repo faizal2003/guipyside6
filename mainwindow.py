@@ -4,9 +4,11 @@ import os
 from datetime import datetime
 import sys
 import ui_src
+import xml.etree.ElementTree as ET
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
+import operator
 # from facedetect import detector
 
 
@@ -42,6 +44,67 @@ class MainWindow(QMainWindow):
     def testshutdown(self):
         print("button shut down pressed")
         sys.exit(app.exec())
+        
+    def log_to_xml(self, name, timestamp, image_path, status="success"):
+        """Log face recognition data to XML file"""
+        xml_file = "log_data.xml"
+        
+        # Check if XML file exists
+        if os.path.exists(xml_file):
+            # Load existing XML
+            try:
+                tree = ET.parse(xml_file)
+                root = tree.getroot()
+            except ET.ParseError:
+                # If file is corrupted, create new root
+                root = ET.Element("log_data")
+                tree = ET.ElementTree(root)
+        else:
+            # Create new XML structure
+            root = ET.Element("log_data")
+            tree = ET.ElementTree(root)
+        
+        # Create new entry
+        entry = ET.SubElement(root, "entry")
+        
+        # Add data elements
+        name_elem = ET.SubElement(entry, "name")
+        name_elem.text = name
+        
+        time_elem = ET.SubElement(entry, "timestamp")
+        time_elem.text = timestamp
+        
+        image_elem = ET.SubElement(entry, "image_path")
+        image_elem.text = image_path
+        
+        status_elem = ET.SubElement(entry, "status")
+        status_elem.text = status
+        
+        # Save XML file
+        try:
+            # Format the XML with proper indentation
+            self.indent_xml(root)
+            tree.write(xml_file, encoding='utf-8', xml_declaration=True)
+            print(f"Data logged to {xml_file}")
+        except Exception as e:
+            print(f"Error writing to XML file: {str(e)}")
+    
+    def indent_xml(self, elem, level=0):
+        """Add indentation to XML for better readability"""
+        i = "\n" + level * "  "
+        if len(elem):
+            if not elem.text or not elem.text.strip():
+                elem.text = i + "  "
+            if not elem.tail or not elem.tail.strip():
+                elem.tail = i
+            for child in elem:
+                self.indent_xml(child, level + 1)
+            if not child.tail or not child.tail.strip():
+                child.tail = i
+        else:
+            if level and (not elem.tail or not elem.tail.strip()):
+                elem.tail = i
+                
     def testimg(self):
         print("button img pressed")
         
@@ -376,24 +439,104 @@ class Password(QMainWindow):
         print("button shut down pressed")
         
 class LogWindow(QMainWindow):
-    def __init__(self, parent=None):
+    def __init__(self, xml_file="log_data.xml", parent=None):
         super().__init__(parent)
+        self.xml_file = xml_file
         self.ui = Ui_Log()
         self.ui.setupUi(self)
         
-        table_model = MyTableModel(self, data_list, header)
-        self.ui.tableView.setModel(table_model)
+        # Load initial data from XML
+        data_list = self.load_data_from_xml()
+        
+        self.table_model = MyTableModel(self, data_list, header)
+        self.ui.tableView.setModel(self.table_model)
         font = QFont("Courier New", 20, QFont.Bold)
         self.ui.pushButton.pressed.connect(self.back_action)
         self.ui.tableView.setFont(font)
         self.ui.tableView.setFixedSize(700, 450)
         self.ui.tableView.resizeColumnsToContents()
-        # self.ui.tableView.setSortingEnabled(True)
+        
+        # Add refresh button (optional)
+        # self.add_refresh_button()
+    
+    def load_data_from_xml(self):
+        """Load data from XML file and return as list of tuples"""
+        try:
+            tree = ET.parse(self.xml_file)
+            root = tree.getroot()
+            
+            data_list = []
+            for record in root.findall('record'):
+                no = int(record.find('no').text) if record.find('no') is not None else 0
+                nama = record.find('nama').text if record.find('nama') is not None else ""
+                tanggal_waktu = record.find('tanggal_waktu').text if record.find('tanggal_waktu') is not None else ""
+                aktivitas = record.find('aktivitas').text if record.find('aktivitas') is not None else ""
+                
+                data_list.append((no, nama, tanggal_waktu, aktivitas))
+            
+            return data_list
+        except FileNotFoundError:
+            print(f"XML file '{self.xml_file}' not found. Using default data.")
+            return self.get_default_data()
+        except ET.ParseError as e:
+            print(f"Error parsing XML: {e}. Using default data.")
+            return self.get_default_data()
+        except Exception as e:
+            print(f"Error loading XML: {e}. Using default data.")
+            return self.get_default_data()
+    
+    def get_default_data(self):
+        """Return default data if XML loading fails"""
+        return [
+            (1, "yanto", "12 januari 25/ 11:11:11", "login"),
+            (2, "agus sedunia", "25 januari 25/12:12:12", "login"),
+            (3, "agus sedunia", "25 januari 25/12:12:12", "login"),
+        ]
+    
+    def refresh_data(self):
+        """Reload data from XML and update the table"""
+        new_data = self.load_data_from_xml()
+        self.table_model.update_data(new_data)
+        self.ui.tableView.resizeColumnsToContents()
+        print("Data refreshed from XML")
+    
+    def save_data_to_xml(self, data_list):
+        """Save current data to XML file"""
+        try:
+            root = ET.Element("logs")
+            
+            for record in data_list:
+                record_elem = ET.SubElement(root, "record")
+                
+                no_elem = ET.SubElement(record_elem, "no")
+                no_elem.text = str(record[0])
+                
+                nama_elem = ET.SubElement(record_elem, "nama")
+                nama_elem.text = record[1]
+                
+                tanggal_elem = ET.SubElement(record_elem, "tanggal_waktu")
+                tanggal_elem.text = record[2]
+                
+                aktivitas_elem = ET.SubElement(record_elem, "aktivitas")
+                aktivitas_elem.text = record[3]
+            
+            tree = ET.ElementTree(root)
+            tree.write(self.xml_file, encoding='utf-8', xml_declaration=True)
+            print(f"Data saved to {self.xml_file}")
+            
+        except Exception as e:
+            print(f"Error saving XML: {e}")
+    
+    def add_refresh_button(self):
+        """Add a refresh button to manually reload XML data"""
+        refresh_btn = QPushButton("Refresh Data")
+        refresh_btn.clicked.connect(self.refresh_data)
+        # You would need to add this to your UI layout
         
     def back_action(self):
         print("button start pressed")
         widget.setCurrentIndex(widget.currentIndex() - 3)
-    
+
 class MyTableModel(QAbstractTableModel):
     def __init__(self, parent, mylist, header, *args):
         QAbstractTableModel.__init__(self, parent, *args)
@@ -404,7 +547,7 @@ class MyTableModel(QAbstractTableModel):
         return len(self.mylist)
 
     def columnCount(self, parent):
-        return len(self.mylist[0])
+        return len(self.mylist[0]) if self.mylist else 0
 
     def data(self, index, role):
         if not index.isValid():
@@ -426,15 +569,21 @@ class MyTableModel(QAbstractTableModel):
         if order == Qt.DescendingOrder:
             self.mylist.reverse()
         self.emit(SIGNAL("layoutChanged()"))
+    
+    def update_data(self, new_data):
+        """Update the model with new data"""
+        self.beginResetModel()
+        self.mylist = new_data
+        self.endResetModel()
 
 # the solvent data ...
 header = ['No','Nama', ' Tanggal/Waktu', ' Aktivitas']
 # use numbers for numeric data to sort properly
-data_list = [
-(1, "yanto", "12 januari 25/ 11:11:11", "login"),
-(2, "agus sedunia", "25 januari 25/12:12:12", "login"),
-(2, "agus sedunia", "25 januari 25/12:12:12", "login"),
-]
+# data_list = [
+# (1, "yanto", "12 januari 25/ 11:11:11", "login"),
+# (2, "agus sedunia", "25 januari 25/12:12:12", "login"),
+# (2, "agus sedunia", "25 januari 25/12:12:12", "login"),
+# ]
 
 
 if __name__ == "__main__":

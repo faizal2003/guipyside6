@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<logs>
+    <record>
+        <no>1</no>
+        <nama>yanto</nama>
+        <tanggal_waktu>12 januari 25/ 11:11:11</tanggal_waktu>
+        <aktivitas>login</aktivitas>
+    </record>
+    <record>
+        <no>2</no>
+        <nama>agus</nama>
+        <tanggal_waktu>25 januari 25/12:12:12</tanggal_waktu>
+        <aktivitas>login</aktivitas>
+    </record>
+    <record>
+        <no>3</no>
+        <nama>budi</nama>
+        <tanggal_waktu>26 januari 25/13:13:13</tanggal_waktu>
+        <aktivitas>logout</aktivitas>
+    </record>
+    <record>
+        <no>4</no>
+        <nama>ali</nama>
+        <tanggal_waktu>23 januari 25/13:13:13</tanggal_waktu>
+        <aktivitas>logout</aktivitas>
+    </record>
+</logs>
