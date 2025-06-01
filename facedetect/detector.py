@@ -8,7 +8,7 @@ from datetime import datetime
 import face_recognition
 from PIL import Image, ImageDraw
 
-DEFAULT_ENCODINGS_PATH = Path("output/encodings.pkl")
+DEFAULT_ENCODINGS_PATH = Path("facedetect/output/encodings.pkl")
 BOUNDING_BOX_COLOR = "blue"
 TEXT_COLOR = "white"
 
@@ -73,30 +73,30 @@ def recognize_faces(
     Given an unknown image, get the locations and encodings of any faces and
     compares them against the known encodings to find potential matches.
     """
-    # with encodings_location.open(mode="rb") as f:
-    #     loaded_encodings = pickle.load(f)
+    with encodings_location.open(mode="rb") as f:
+        loaded_encodings = pickle.load(f)
 
-    # input_image = face_recognition.load_image_file(image_location)
+    input_image = face_recognition.load_image_file(image_location)
 
-    # input_face_locations = face_recognition.face_locations(
-    #     input_image, model=model
-    # )
-    # input_face_encodings = face_recognition.face_encodings(
-    #     input_image, input_face_locations
-    # )
+    input_face_locations = face_recognition.face_locations(
+        input_image, model=model
+    )
+    input_face_encodings = face_recognition.face_encodings(
+        input_image, input_face_locations
+    )
 
-    # pillow_image = Image.fromarray(input_image)
-    # draw = ImageDraw.Draw(pillow_image)
+    pillow_image = Image.fromarray(input_image)
+    draw = ImageDraw.Draw(pillow_image)
 
-    # for bounding_box, unknown_encoding in zip(
-    #     input_face_locations, input_face_encodings
-    # ):
-    #     name = _recognize_face(unknown_encoding, loaded_encodings)
-    #     if not name:
-    #         name = "Unknown"
-    #     _display_face(draw, bounding_box, name)
+    for bounding_box, unknown_encoding in zip(
+        input_face_locations, input_face_encodings
+    ):
+        name = _recognize_face(unknown_encoding, loaded_encodings)
+        if not name:
+            name = "Unknown"
+        _display_face(draw, bounding_box, name)
 
-    # del draw
+    del draw
     # pillow_image.show()
     with encodings_location.open(mode="rb") as f:
         loaded_encodings = pickle.load(f)
@@ -122,11 +122,13 @@ def recognize_faces(
         name = _recognize_face(unknown_encoding, loaded_encodings)
         if not name:
             name = "Unknown"
+        else:
+            print("wajah dikenali, membuka brankas")
         _display_face(draw, bounding_box, name)
         recognized_names.add(name)
 
     del draw
-    pillow_image.show()
+    # pillow_image.show()
 
 # Save image with name(s) and timestamp
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -135,7 +137,7 @@ def recognize_faces(
     base_name = "_".join(sorted(recognized_names))
 
     # Final filename
-    save_dir = "output_images"
+    save_dir = "facedetect/output_images"
     os.makedirs(save_dir, exist_ok=True)
     filename = f"{base_name}_{timestamp}.jpg"
     save_path = os.path.join(save_dir, filename)
@@ -193,10 +195,10 @@ def validate(model: str = "hog"):
             )
 
 
-if __name__ == "__main__":
-    if args.train:
-        encode_known_faces(model=args.m)
-    if args.validate:
-        validate(model=args.m)
-    if args.test:
-        recognize_faces(image_location=args.f, model=args.m)
+# if __name__ == "__main__":
+#     if args.train:
+#         encode_known_faces(model=args.m)
+#     if args.validate:
+#         validate(model=args.m)
+#     if args.test:
+#         recognize_faces(image_location=args.f, model=args.m)

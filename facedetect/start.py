@@ -218,10 +218,3 @@ def validate(model: str = "hog"):
             )
 
 
-if __name__ == "__main__":
-    # if args.train:
-    #     encode_known_faces(model=args.m)
-    # if args.validate:
-    #     validate(model=args.m)
-    # if args.test:
-    #     recognize_faces(image_location=args.f, model=args.m)
