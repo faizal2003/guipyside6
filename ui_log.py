@@ -47,10 +47,13 @@ class Ui_Log(object):
         self.tableView.setStyleSheet(u"background-color: rgb(255,255,255);\n"
 "gridline-color:  rgb(255, 255, 255);\n"
 "color: rgb(0,0,0);")
+        self.pushButton_2 = QPushButton(self.centralwidget)
+        self.pushButton_2.setObjectName(u"pushButton_2")
+        self.pushButton_2.setGeometry(QRect(850, 10, 161, 61))
         Log.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(Log)
         self.menubar.setObjectName(u"menubar")
-        self.menubar.setGeometry(QRect(0, 0, 1024, 21))
+        self.menubar.setGeometry(QRect(0, 0, 1024, 23))
         Log.setMenuBar(self.menubar)
         self.statusbar = QStatusBar(Log)
         self.statusbar.setObjectName(u"statusbar")
@@ -64,5 +67,6 @@ class Ui_Log(object):
     def retranslateUi(self, Log):
         Log.setWindowTitle(QCoreApplication.translate("Log", u"MainWindow", None))
         self.pushButton.setText("")
+        self.pushButton_2.setText(QCoreApplication.translate("Log", u"Perbarui", None))
     # retranslateUi
 

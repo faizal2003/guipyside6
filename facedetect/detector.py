@@ -4,6 +4,8 @@ from collections import Counter
 from pathlib import Path
 import os
 from datetime import datetime
+import xml.etree.ElementTree as ET
+
 
 import face_recognition
 from PIL import Image, ImageDraw
@@ -48,6 +50,7 @@ def encode_known_faces(
     names = []
     encodings = []
 
+    print("start encoding faces")
     for filepath in Path("training").glob("*/*"):
         name = filepath.parent.name
         image = face_recognition.load_image_file(filepath)
@@ -62,7 +65,8 @@ def encode_known_faces(
     name_encodings = {"names": names, "encodings": encodings}
     with encodings_location.open(mode="wb") as f:
         pickle.dump(name_encodings, f)
-
+    print("finished encoding faces")
+    isComplete = True
 
 def recognize_faces(
     image_location: str,
@@ -94,6 +98,7 @@ def recognize_faces(
         name = _recognize_face(unknown_encoding, loaded_encodings)
         if not name:
             name = "Unknown"
+            print("wajah tidak dikenali")
         _display_face(draw, bounding_box, name)
 
     del draw
@@ -122,20 +127,31 @@ def recognize_faces(
         name = _recognize_face(unknown_encoding, loaded_encodings)
         if not name:
             name = "Unknown"
+            print("wajah tidak dikenali")
+            act = "gagal"
         else:
             print("wajah dikenali, membuka brankas")
+            act = "berhasil"
+            #todo: open safe when face is recognized
         _display_face(draw, bounding_box, name)
         recognized_names.add(name)
 
     del draw
     # pillow_image.show()
-
+    # if recognized_names == "":
+    #     print("Tidak ada wajah yang dikenali dalam gambar.")
+    # print(sorted(recognized_names))
+    # if len(sorted(recognized_names)) == 0:
+    #     print("Tidak ada wajah yang dikenali dalam gambar.")
+        
 # Save image with name(s) and timestamp
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-
+    timestamplog = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     # If multiple names are detected, join them with underscores
     base_name = "_".join(sorted(recognized_names))
-
+    # nama = sorted(recognized_names)
+    # print(nama)
+    # print(base_name)
     # Final filename
     save_dir = "facedetect/output_images"
     os.makedirs(save_dir, exist_ok=True)
@@ -144,6 +160,13 @@ def recognize_faces(
 
     pillow_image.save(save_path)
     print(f"Saved image to {save_path}")
+    log_to_xml(
+        name=base_name,
+        waktu=timestamplog,
+        aktivitas=act)
+    
+    act = ""
+    
 
 def _recognize_face(unknown_encoding, loaded_encodings):
     """
@@ -195,10 +218,72 @@ def validate(model: str = "hog"):
             )
 
 
-# if __name__ == "__main__":
-#     if args.train:
-#         encode_known_faces(model=args.m)
-#     if args.validate:
-#         validate(model=args.m)
-#     if args.test:
-#         recognize_faces(image_location=args.f, model=args.m)
+def log_to_xml(name, waktu, aktivitas="login"):
+        """Log face recognition data to XML file"""
+        xml_file = "log_data.xml"
+        
+        # Check if XML file exists
+        if os.path.exists(xml_file):
+            # Load existing XML
+            try:
+                tree = ET.parse(xml_file)
+                root = tree.getroot()
+            except ET.ParseError:
+                # If file is corrupted, create new root
+                root = ET.Element("logs")
+                tree = ET.ElementTree(root)
+        else:
+            # Create new XML structure
+            root = ET.Element("logs")
+            tree = ET.ElementTree(root)
+        
+        # Get the next record number
+        existing_records = root.findall("record")
+        next_no = len(existing_records) + 1
+        
+        # Create new record
+        record = ET.SubElement(root, "record")
+        
+        # Add data elements
+        no_elem = ET.SubElement(record, "no")
+        no_elem.text = str(next_no)
+        
+        nama_elem = ET.SubElement(record, "nama")
+        nama_elem.text = name if name != "Unknown" else "tidak_dikenal"
+        
+        tanggal_waktu_elem = ET.SubElement(record, "tanggal_waktu")
+        tanggal_waktu_elem.text = waktu
+        
+        aktivitas_elem = ET.SubElement(record, "aktivitas")
+        aktivitas_elem.text = aktivitas
+        
+        # Save XML file
+        
+        tree.write(xml_file, encoding='UTF-8', xml_declaration=True)
+        print(f"Data logged to {xml_file}")
+   
+    
+def indent_xml(self, elem, level=0):
+    """Add indentation to XML for better readability"""
+    i = "\n" + level * "  "
+    if len(elem):
+        if not elem.text or not elem.text.strip():
+            elem.text = i + "  "
+        if not elem.tail or not elem.tail.strip():
+            elem.tail = i
+        for child in elem:
+            self.indent_xml(child, level + 1)
+        if not child.tail or not child.tail.strip():
+            child.tail = i
+    else:
+        if level and (not elem.tail or not elem.tail.strip()):
+                elem.tail = i
+
+
+if __name__ == "__main__":
+    if args.train:
+        encode_known_faces(model=args.m)
+    if args.validate:
+        validate(model=args.m)
+    if args.test:
+        recognize_faces(image_location=args.f, model=args.m)

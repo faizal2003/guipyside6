@@ -21,6 +21,7 @@ from ui_mainmenu import Ui_MainMenu
 from ui_tambahdata import Ui_TambahData
 from ui_password import Ui_Password
 from ui_log import Ui_Log
+from ui_hapusdata import Ui_HapusData
 
 # Add the facedetect folder to Python path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'facedetect'))
@@ -45,65 +46,65 @@ class MainWindow(QMainWindow):
         print("button shut down pressed")
         sys.exit(app.exec())
         
-    def log_to_xml(self, name, timestamp, image_path, status="success"):
-        """Log face recognition data to XML file"""
-        xml_file = "log_data.xml"
+    # def log_to_xml(self, name, timestamp, image_path, status="success"):
+    #     """Log face recognition data to XML file"""
+    #     xml_file = "log_data.xml"
         
-        # Check if XML file exists
-        if os.path.exists(xml_file):
-            # Load existing XML
-            try:
-                tree = ET.parse(xml_file)
-                root = tree.getroot()
-            except ET.ParseError:
-                # If file is corrupted, create new root
-                root = ET.Element("log_data")
-                tree = ET.ElementTree(root)
-        else:
-            # Create new XML structure
-            root = ET.Element("log_data")
-            tree = ET.ElementTree(root)
+    #     # Check if XML file exists
+    #     if os.path.exists(xml_file):
+    #         # Load existing XML
+    #         try:
+    #             tree = ET.parse(xml_file)
+    #             root = tree.getroot()
+    #         except ET.ParseError:
+    #             # If file is corrupted, create new root
+    #             root = ET.Element("log_data")
+    #             tree = ET.ElementTree(root)
+    #     else:
+    #         # Create new XML structure
+    #         root = ET.Element("log_data")
+    #         tree = ET.ElementTree(root)
         
-        # Create new entry
-        entry = ET.SubElement(root, "entry")
+    #     # Create new entry
+    #     entry = ET.SubElement(root, "entry")
         
-        # Add data elements
-        name_elem = ET.SubElement(entry, "name")
-        name_elem.text = name
+    #     # Add data elements
+    #     name_elem = ET.SubElement(entry, "name")
+    #     name_elem.text = name
         
-        time_elem = ET.SubElement(entry, "timestamp")
-        time_elem.text = timestamp
+    #     time_elem = ET.SubElement(entry, "timestamp")
+    #     time_elem.text = timestamp
         
-        image_elem = ET.SubElement(entry, "image_path")
-        image_elem.text = image_path
+    #     image_elem = ET.SubElement(entry, "image_path")
+    #     image_elem.text = image_path
         
-        status_elem = ET.SubElement(entry, "status")
-        status_elem.text = status
+    #     status_elem = ET.SubElement(entry, "status")
+    #     status_elem.text = status
         
-        # Save XML file
-        try:
-            # Format the XML with proper indentation
-            self.indent_xml(root)
-            tree.write(xml_file, encoding='utf-8', xml_declaration=True)
-            print(f"Data logged to {xml_file}")
-        except Exception as e:
-            print(f"Error writing to XML file: {str(e)}")
+    #     # Save XML file
+    #     try:
+    #         # Format the XML with proper indentation
+    #         self.indent_xml(root)
+    #         tree.write(xml_file, encoding='utf-8', xml_declaration=True)
+    #         print(f"Data logged to {xml_file}")
+    #     except Exception as e:
+    #         print(f"Error writing to XML file: {str(e)}")
     
-    def indent_xml(self, elem, level=0):
-        """Add indentation to XML for better readability"""
-        i = "\n" + level * "  "
-        if len(elem):
-            if not elem.text or not elem.text.strip():
-                elem.text = i + "  "
-            if not elem.tail or not elem.tail.strip():
-                elem.tail = i
-            for child in elem:
-                self.indent_xml(child, level + 1)
-            if not child.tail or not child.tail.strip():
-                child.tail = i
-        else:
-            if level and (not elem.tail or not elem.tail.strip()):
-                elem.tail = i
+    # def indent_xml(self, elem, level=0):
+    #     """Add indentation to XML for better readability"""
+    #     i = "\n" + level * "  "
+    #     if len(elem):
+    #         if not elem.text or not elem.text.strip():
+    #             elem.text = i + "  "
+    #         if not elem.tail or not elem.tail.strip():
+    #             elem.tail = i
+    #         for child in elem:
+    #             self.indent_xml(child, level + 1)
+    #         if not child.tail or not child.tail.strip():
+    #             child.tail = i
+    #     else:
+    #         if level and (not elem.tail or not elem.tail.strip()):
+    #             elem.tail = i
                 
     def testimg(self):
         print("button img pressed")
@@ -163,18 +164,26 @@ class SecondWindow(QMainWindow):
         self.ui.setupUi(self)
         self.ui.pushButton_5.pressed.connect(self.back_action)
         self.ui.pushButton_2.pressed.connect(self.tambahdata_action)
+        self.ui.pushButton_3.pressed.connect(self.hapusdata_action)
         self.ui.pushButton.pressed.connect(self.logbutton_action)
+        print(widget.currentIndex())
 
+    def hapusdata_action(self):
+        print("button delete pressed")
+        widget.setCurrentIndex(widget.currentIndex() + 4 )
+        print(widget.currentIndex())
     def logbutton_action(self):
         print("button log pressed")
         widget.setCurrentIndex(widget.currentIndex() + 3 )
+        print(widget.currentIndex())
     def back_action(self):
         # print("button start pressed")
         widget.setCurrentIndex(widget.currentIndex() - 1)
-
+        print(widget.currentIndex())
     def tambahdata_action(self):
         print("button shut down pressed")
         widget.setCurrentIndex(widget.currentIndex() + 1)
+        print(widget.currentIndex())
 
 
 class TambahData(QMainWindow):
@@ -323,7 +332,7 @@ class TambahData(QMainWindow):
         
         try:
             # Create folder with the name from textEdit
-            folder_path = os.path.join("photos", name)
+            folder_path = os.path.join("facedetect/training", name)
             if not os.path.exists(folder_path):
                 os.makedirs(folder_path)
             
@@ -374,6 +383,8 @@ class TambahData(QMainWindow):
         print("Back button pressed")
         # Stop camera when leaving the window
         self.cleanup_camera()
+        detector.encode_known_faces(model="hog")
+        QMessageBox.information(self, "Menambahkan wajah", "menambahkan wajah ke database, silahkan tunggu...")
         widget.setCurrentIndex(widget.currentIndex() - 1)
     
     def cleanup_camera(self):
@@ -437,7 +448,40 @@ class Password(QMainWindow):
 
     def testshutdown(self):
         print("button shut down pressed")
+
+class Hapusdata(QMainWindow):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.ui = Ui_HapusData()
+        self.ui.setupUi(self)
+        self.ui.pushButton.pressed.connect(self.back_action)
+        self.ui.pushButton_2.pressed.connect(self.delete_data)
+
+    def delete_data(self):
+        print("Delete button pressed")
+        name = self.ui.textEdit.toPlainText().strip()
+        if not name:
+            QMessageBox.warning(self, "Delete Error", "Please enter a name to delete.")
+            return
         
+        folder_path = os.path.join("facedetect/training", name)
+        if os.path.exists(folder_path):
+            try:
+                # Remove the folder and its contents
+                import shutil
+                shutil.rmtree(folder_path)
+                QMessageBox.information(self, "Delete Success", f"Data for '{name}' deleted successfully.")
+                print(f"Deleted folder: {folder_path}")
+            except Exception as e:
+                QMessageBox.critical(self, "Delete Error", f"Error deleting data: {str(e)}")
+                print(f"Error deleting folder: {e}")
+        else:
+            QMessageBox.warning(self, "Delete Error", f"No data found for '{name}'.")
+
+    def back_action(self):
+        print("button start pressed")
+        widget.setCurrentIndex(widget.currentIndex() - 4)
+
 class LogWindow(QMainWindow):
     def __init__(self, xml_file="log_data.xml", parent=None):
         super().__init__(parent)
@@ -452,6 +496,7 @@ class LogWindow(QMainWindow):
         self.ui.tableView.setModel(self.table_model)
         font = QFont("Courier New", 20, QFont.Bold)
         self.ui.pushButton.pressed.connect(self.back_action)
+        self.ui.pushButton_2.pressed.connect(self.refresh_data)
         self.ui.tableView.setFont(font)
         self.ui.tableView.setFixedSize(700, 450)
         self.ui.tableView.resizeColumnsToContents()
@@ -586,19 +631,23 @@ header = ['No','Nama', ' Tanggal/Waktu', ' Aktivitas']
 # ]
 
 
+
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     widget=QStackedWidget()
     mainwindow=MainWindow()
     mainmenu=SecondWindow()
+    # hapusdata=Hapusdata()
     tambahdata=TambahData()
     password=Password()
     log=LogWindow()
+    hapusdata=Hapusdata()
     widget.addWidget(mainwindow)
     widget.addWidget(mainmenu)
     widget.addWidget(password)
     widget.addWidget(tambahdata)
     widget.addWidget(log)
+    widget.addWidget(hapusdata)
     # widget = MainWindow()
     widget.show()
     sys.exit(app.exec())
