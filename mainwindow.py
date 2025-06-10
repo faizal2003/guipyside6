@@ -480,6 +480,8 @@ class Hapusdata(QMainWindow):
 
     def back_action(self):
         print("button start pressed")
+        detector.encode_known_faces(model="hog")
+        QMessageBox.information(self, "Menghapus wajah", "menghapus wajah dari database, silahkan tunggu...")
         widget.setCurrentIndex(widget.currentIndex() - 4)
 
 class LogWindow(QMainWindow):
@@ -649,5 +651,6 @@ if __name__ == "__main__":
     widget.addWidget(log)
     widget.addWidget(hapusdata)
     # widget = MainWindow()
-    widget.show()
+    # widget.show()
+    widget.showFullScreen()
     sys.exit(app.exec())
