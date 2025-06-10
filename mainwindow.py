@@ -45,66 +45,6 @@ class MainWindow(QMainWindow):
     def testshutdown(self):
         print("button shut down pressed")
         sys.exit(app.exec())
-        
-    # def log_to_xml(self, name, timestamp, image_path, status="success"):
-    #     """Log face recognition data to XML file"""
-    #     xml_file = "log_data.xml"
-        
-    #     # Check if XML file exists
-    #     if os.path.exists(xml_file):
-    #         # Load existing XML
-    #         try:
-    #             tree = ET.parse(xml_file)
-    #             root = tree.getroot()
-    #         except ET.ParseError:
-    #             # If file is corrupted, create new root
-    #             root = ET.Element("log_data")
-    #             tree = ET.ElementTree(root)
-    #     else:
-    #         # Create new XML structure
-    #         root = ET.Element("log_data")
-    #         tree = ET.ElementTree(root)
-        
-    #     # Create new entry
-    #     entry = ET.SubElement(root, "entry")
-        
-    #     # Add data elements
-    #     name_elem = ET.SubElement(entry, "name")
-    #     name_elem.text = name
-        
-    #     time_elem = ET.SubElement(entry, "timestamp")
-    #     time_elem.text = timestamp
-        
-    #     image_elem = ET.SubElement(entry, "image_path")
-    #     image_elem.text = image_path
-        
-    #     status_elem = ET.SubElement(entry, "status")
-    #     status_elem.text = status
-        
-    #     # Save XML file
-    #     try:
-    #         # Format the XML with proper indentation
-    #         self.indent_xml(root)
-    #         tree.write(xml_file, encoding='utf-8', xml_declaration=True)
-    #         print(f"Data logged to {xml_file}")
-    #     except Exception as e:
-    #         print(f"Error writing to XML file: {str(e)}")
-    
-    # def indent_xml(self, elem, level=0):
-    #     """Add indentation to XML for better readability"""
-    #     i = "\n" + level * "  "
-    #     if len(elem):
-    #         if not elem.text or not elem.text.strip():
-    #             elem.text = i + "  "
-    #         if not elem.tail or not elem.tail.strip():
-    #             elem.tail = i
-    #         for child in elem:
-    #             self.indent_xml(child, level + 1)
-    #         if not child.tail or not child.tail.strip():
-    #             child.tail = i
-    #     else:
-    #         if level and (not elem.tail or not elem.tail.strip()):
-    #             elem.tail = i
                 
     def testimg(self):
         print("button img pressed")
