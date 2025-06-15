@@ -8,6 +8,7 @@ import xml.etree.ElementTree as ET
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
+from PySide6.QtGui import QPixmap, QIcon
 import operator
 # from facedetect import detector
 
@@ -22,6 +23,8 @@ from ui_tambahdata import Ui_TambahData
 from ui_password import Ui_Password
 from ui_log import Ui_Log
 from ui_hapusdata import Ui_HapusData
+from ui_deteksi import Ui_Deteksi
+from ui_capture import Ui_CaptureWindow
 
 # Add the facedetect folder to Python path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'facedetect'))
@@ -37,7 +40,7 @@ class MainWindow(QMainWindow):
         self.ui.setupUi(self)
         self.ui.pushButton.pressed.connect(self.teststart)
         self.ui.pushButton_2.pressed.connect(self.testshutdown)
-        self.ui.pushButton_3.pressed.connect(self.testimg)
+        self.ui.pushButton_3.pressed.connect(self.detek)
 
     def teststart(self):
         print("button start pressed")
@@ -45,57 +48,61 @@ class MainWindow(QMainWindow):
     def testshutdown(self):
         print("button shut down pressed")
         sys.exit(app.exec())
-                
-    def testimg(self):
-        print("button img pressed")
+      
+    def detek(self):
+        print("button detek pressed")
+        widget.setCurrentIndex(widget.currentIndex() + 6)
+        print(widget.currentIndex())          
+    # def testimg(self):
+    #     print("button img pressed")
         
-        # Create facedetect/targetface folder if it doesn't exist
-        folder_name = os.path.join("facedetect", "targetface")
-        if not os.path.exists(folder_name):
-            os.makedirs(folder_name)
-            print(f"Created folder: {folder_name}")
+    #     # Create facedetect/targetface folder if it doesn't exist
+    #     folder_name = os.path.join("facedetect", "targetface")
+    #     if not os.path.exists(folder_name):
+    #         os.makedirs(folder_name)
+    #         print(f"Created folder: {folder_name}")
         
-        # Initialize camera
-        cap = cv2.VideoCapture(0)  # 0 for default camera
+    #     # Initialize camera
+    #     cap = cv2.VideoCapture(0)  # 0 for default camera
         
-        if not cap.isOpened():
-            print("Error: Could not open camera")
-            QMessageBox.warning(self, "Camera Error", "Could not access camera!")
-            return
+    #     if not cap.isOpened():
+    #         print("Error: Could not open camera")
+    #         QMessageBox.warning(self, "Camera Error", "Could not access camera!")
+    #         return
         
-        try:
-            # Capture frame
-            ret, frame = cap.read()
+    #     try:
+    #         # Capture frame
+    #         ret, frame = cap.read()
             
-            if ret:
-                # Fixed filename that will be overwritten each time
-                filename = "target_image.jpg"
-                filepath = os.path.join(folder_name, filename)
+    #         if ret:
+    #             # Fixed filename that will be overwritten each time
+    #             filename = "target_image.jpg"
+    #             filepath = os.path.join(folder_name, filename)
                 
-                # Save the image
-                success = cv2.imwrite(filepath, frame)
+    #             # Save the image
+    #             success = cv2.imwrite(filepath, frame)
                 
-                if success:
-                    print(f"Image saved successfully: {filepath}")
-                    # QMessageBox.information(self, "Success", f"Image saved to {filepath}")
-                else:
-                    print("Error: Failed to save image")
-                    QMessageBox.warning(self, "Save Error", "Failed to save image!")
-            else:
-                print("Error: Failed to capture image")
-                QMessageBox.warning(self, "Capture Error", "Failed to capture image from camera!")
+    #             if success:
+    #                 print(f"Image saved successfully: {filepath}")
+    #                 # QMessageBox.information(self, "Success", f"Image saved to {filepath}")
+    #             else:
+    #                 print("Error: Failed to save image")
+    #                 QMessageBox.warning(self, "Save Error", "Failed to save image!")
+    #         else:
+    #             print("Error: Failed to capture image")
+    #             QMessageBox.warning(self, "Capture Error", "Failed to capture image from camera!")
                 
-        except Exception as e:
-            print(f"Error during image capture: {str(e)}")
-            QMessageBox.critical(self, "Error", f"An error occurred: {str(e)}")
+    #     except Exception as e:
+    #         print(f"Error during image capture: {str(e)}")
+    #         QMessageBox.critical(self, "Error", f"An error occurred: {str(e)}")
             
-        finally:
-            # Always release the camera
-            cap.release()
-            print("Camera released")
+    #     finally:
+    #         # Always release the camera
+    #         cap.release()
+    #         print("Camera released")
             
-        detector.recognize_faces(image_location=filepath)
-        print("Face recognition completed")
+    #     detector.recognize_faces(image_location=filepath)
+    #     print("Face recognition completed")
 
 class SecondWindow(QMainWindow):
     def __init__(self, parent=None):
@@ -105,9 +112,13 @@ class SecondWindow(QMainWindow):
         self.ui.pushButton_5.pressed.connect(self.back_action)
         self.ui.pushButton_2.pressed.connect(self.tambahdata_action)
         self.ui.pushButton_3.pressed.connect(self.hapusdata_action)
+        self.ui.pushButton_4.pressed.connect(self.capturewindow_action)
         self.ui.pushButton.pressed.connect(self.logbutton_action)
         print(widget.currentIndex())
-
+    def capturewindow_action(self):
+        print("button capture pressed")
+        widget.setCurrentIndex(widget.currentIndex() + 6 )
+        print(widget.currentIndex())
     def hapusdata_action(self):
         print("button delete pressed")
         widget.setCurrentIndex(widget.currentIndex() + 4 )
@@ -278,7 +289,7 @@ class TambahData(QMainWindow):
             
             # Generate filename with timestamp
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            filename = f"{name}_{timestamp}.jpg"
+            filename = f"{timestamp}.jpg"
             filepath = os.path.join(folder_path, filename)
             
             # Save the photo
@@ -323,7 +334,7 @@ class TambahData(QMainWindow):
         print("Back button pressed")
         # Stop camera when leaving the window
         self.cleanup_camera()
-        detector.encode_known_faces(model="hog")
+        detector.encode_known_faces()
         QMessageBox.information(self, "Menambahkan wajah", "menambahkan wajah ke database, silahkan tunggu...")
         widget.setCurrentIndex(widget.currentIndex() - 1)
     
@@ -423,6 +434,250 @@ class Hapusdata(QMainWindow):
         detector.encode_known_faces(model="hog")
         QMessageBox.information(self, "Menghapus wajah", "menghapus wajah dari database, silahkan tunggu...")
         widget.setCurrentIndex(widget.currentIndex() - 4)
+
+class Deteksi(QMainWindow):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.ui = Ui_Deteksi()
+        self.ui.setupUi(self)
+        
+        # Connect buttons
+        self.ui.pushButton_2.pressed.connect(self.back_action)
+        self.ui.pushButton.pressed.connect(self.deteksi_action)  # Detection button
+        
+        # Camera setup
+        self.camera = None
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.update_frame)
+        self.captured_frame = None
+        self.is_capturing = False
+        self.camera_initialized = False
+        
+        # Create target directory if it doesn't exist
+        self.target_dir = "facedetect/targetface"
+        os.makedirs(self.target_dir, exist_ok=True)
+        
+        # Setup camera display
+        self.camera_label = None
+        self.setup_camera_display()
+    
+    def showEvent(self, event):
+        """Handle when window is shown - restart camera"""
+        super().showEvent(event)
+        if not self.camera_initialized or not self.camera or not self.camera.isOpened():
+            print("Window shown - initializing camera")
+            self.init_camera()
+    
+    def hideEvent(self, event):
+        """Handle when window is hidden - stop camera"""
+        super().hideEvent(event)
+        print("Window hidden - stopping camera")
+        self.cleanup_camera()
+    
+    def setup_camera_display(self):
+        """Setup the camera display area"""
+        # Try to find existing label for camera display
+        if hasattr(self.ui, 'label'):
+            self.camera_label = self.ui.label
+        elif hasattr(self.ui, 'label_camera'):
+            self.camera_label = self.ui.label_camera
+        else:
+            # Create a new label for camera display if not exists
+            self.camera_label = QLabel(self)
+            self.camera_label.setGeometry(150, 100, 640, 480)  # Adjust based on your layout
+            self.camera_label.setStyleSheet("border: 2px solid red; background-color: black;")
+        
+        self.camera_label.setAlignment(Qt.AlignCenter)
+        self.camera_label.setScaledContents(True)
+        self.camera_label.setText("Camera Loading...")
+    
+    def check_available_cameras(self):
+        """Check which camera indices are available"""
+        available_cameras = []
+        for i in range(5):  # Check first 5 indices
+            cap = cv2.VideoCapture(i)
+            if cap.isOpened():
+                ret, frame = cap.read()
+                if ret and frame is not None:
+                    available_cameras.append(i)
+                    print(f"Camera {i}: Available ({frame.shape})")
+                else:
+                    print(f"Camera {i}: Opens but no frames")
+                cap.release()
+            else:
+                print(f"Camera {i}: Not available")
+        
+        if not available_cameras:
+            print("No cameras found!")
+        return available_cameras
+    
+    def init_camera(self):
+        """Initialize the camera"""
+        try:
+            # Clean up existing camera first
+            if self.camera and self.camera.isOpened():
+                self.camera.release()
+            
+            # Add small delay to ensure camera is released
+            import time
+            time.sleep(0.1)
+            
+            # Check for available cameras
+            print("Checking available cameras...")
+            available_cameras = self.check_available_cameras()
+            
+            if not available_cameras:
+                raise Exception("No cameras detected")
+            
+            # Try to open the first available camera
+            camera_index = available_cameras[0]
+            self.camera = cv2.VideoCapture(camera_index)
+            
+            if not self.camera.isOpened():
+                raise Exception(f"Could not open camera {camera_index}")
+            
+            # Set camera properties
+            self.camera.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
+            self.camera.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
+            self.camera.set(cv2.CAP_PROP_BUFFERSIZE, 1)
+            
+            # Test camera by reading a frame
+            ret, frame = self.camera.read()
+            if not ret or frame is None:
+                raise Exception("Camera opens but cannot read frames")
+            
+            # Start camera feed
+            self.timer.start(30)  # Update every 30ms
+            self.is_capturing = True
+            self.camera_initialized = True
+            
+            print(f"Camera {camera_index} initialized successfully")
+            
+        except Exception as e:
+            print(f"Camera initialization error: {e}")
+            self.camera_label.setText(f"Camera Error: {str(e)}\n\nTroubleshooting:\n- Close other camera apps\n- Check camera connections\n- Try running as administrator")
+            self.camera_initialized = False
+            
+            # Show detailed error message
+            QMessageBox.warning(self, "Camera Error", 
+                              f"Failed to initialize camera: {str(e)}\n\n"
+                              "Troubleshooting tips:\n"
+                              "1. Close other apps using the camera\n"
+                              "2. Check camera connections\n"
+                              "3. Try running as administrator\n"
+                              "4. Check camera permissions")
+    
+    def update_frame(self):
+        """Update camera frame"""
+        if self.camera and self.camera.isOpened() and self.is_capturing:
+            ret, frame = self.camera.read()
+            if ret and frame is not None:
+                # Store current frame for detection
+                self.captured_frame = frame.copy()
+                
+                # Convert frame to QImage and display
+                rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                h, w, ch = rgb_frame.shape
+                bytes_per_line = ch * w
+                qt_image = QImage(rgb_frame.data, w, h, bytes_per_line, QImage.Format_RGB888)
+                
+                # Scale image to fit label
+                pixmap = QPixmap.fromImage(qt_image)
+                scaled_pixmap = pixmap.scaled(self.camera_label.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
+                self.camera_label.setPixmap(scaled_pixmap)
+            else:
+                print("Failed to read frame from camera")
+    
+    def deteksi_action(self):
+        """Save current frame when detection button is pressed"""
+        print("Deteksi button pressed")
+        
+        if self.captured_frame is None:
+            QMessageBox.warning(self, "Detection Error", "No camera feed available. Please ensure camera is working.")
+            return
+        
+        try:
+            # Save the current frame as target_image.jpg
+            target_path = os.path.join(self.target_dir, "target_image.jpg")
+            success = cv2.imwrite(target_path, self.captured_frame)
+            
+            if success:
+                QMessageBox.information(self, "Success", f"Target image saved successfully!\nLocation: {target_path}")
+                print(f"Image saved successfully to {target_path}")
+                detector.recognize_faces(image_location=target_path)
+                
+                # Optional: Show captured image briefly
+                self.is_capturing = False  # Stop live feed temporarily
+                
+                # Display captured image with border or indicator
+                rgb_frame = cv2.cvtColor(self.captured_frame, cv2.COLOR_BGR2RGB)
+                h, w, ch = rgb_frame.shape
+                bytes_per_line = ch * w
+                qt_image = QImage(rgb_frame.data, w, h, bytes_per_line, QImage.Format_RGB888)
+                
+                pixmap = QPixmap.fromImage(qt_image)
+                scaled_pixmap = pixmap.scaled(self.camera_label.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
+                self.camera_label.setPixmap(scaled_pixmap)
+                
+                # Resume live feed after 2 seconds
+                QTimer.singleShot(2000, self.resume_live_feed)
+                
+            else:
+                QMessageBox.warning(self, "Error", "Failed to save target image!")
+                print("Failed to save image")
+                
+        except Exception as e:
+            print(f"Detection error: {e}")
+            QMessageBox.critical(self, "Detection Error", f"Error saving target image: {str(e)}")
+    
+    def resume_live_feed(self):
+        """Resume live camera feed"""
+        self.is_capturing = True
+        print("Resumed live camera feed")
+    
+    def back_action(self):
+        """Handle back button press"""
+        print("Back button pressed")
+        # Stop camera when leaving the window
+        self.cleanup_camera()
+        widget.setCurrentIndex(widget.currentIndex() - 4)
+    
+    def cleanup_camera(self):
+        """Clean up camera resources"""
+        print("Cleaning up camera resources")
+        
+        # Stop timer first
+        if self.timer.isActive():
+            self.timer.stop()
+        
+        # Set flags to stop capturing
+        self.is_capturing = False
+        
+        # Release camera with proper cleanup
+        if self.camera and self.camera.isOpened():
+            self.camera.release()
+            print("Camera released")
+        
+        # Set camera to None to ensure clean state
+        self.camera = None
+        self.camera_initialized = False
+        
+        # Clear the display
+        if self.camera_label:
+            self.camera_label.clear()
+            self.camera_label.setText("Camera Stopped")
+        
+        # Force garbage collection to ensure cleanup
+        import gc
+        gc.collect()
+    
+    def closeEvent(self, event):
+        """Handle window close event"""
+        self.cleanup_camera()
+        super().closeEvent(event)
+    
+    def testshutdown(self):
+        print("button shut down pressed")
 
 class LogWindow(QMainWindow):
     def __init__(self, xml_file="log_data.xml", parent=None):
@@ -562,7 +817,136 @@ class MyTableModel(QAbstractTableModel):
         self.beginResetModel()
         self.mylist = new_data
         self.endResetModel()
-
+        
+class ImageGallery(QMainWindow):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.ui = Ui_CaptureWindow()
+        self.ui.setupUi(self)
+        
+        # Connect buttons
+        self.ui.pushButton.pressed.connect(self.back_action)
+        # self.ui.pushButton.pressed.connect(self.deteksi_action)  # Detection button
+        
+        # Setup the QListWidget for images
+        self.setup_image_list()
+        
+        # Load images from folder
+        self.load_images()
+    
+    def setup_image_list(self):
+        """Configure the QListView for displaying images"""
+        # Create a model for the QListView
+        self.model = QStandardItemModel()
+        self.ui.listView.setModel(self.model)
+        
+        # Set icon size (adjust as needed)
+        self.ui.listView.setIconSize(QSize(200, 200))
+        
+        # Set grid size to accommodate icon and text
+        self.ui.listView.setGridSize(QSize(240, 250))
+        
+        # Set flow and wrapping
+        self.ui.listView.setFlow(QListView.Flow.LeftToRight)
+        self.ui.listView.setWrapping(True)
+        
+        # Set view mode to icon mode
+        self.ui.listView.setViewMode(QListView.ViewMode.IconMode)
+        
+        # Set resize mode
+        self.ui.listView.setResizeMode(QListView.ResizeMode.Adjust)
+        
+        # Set spacing
+        self.ui.listView.setSpacing(10)
+        
+        # Optional: Set selection mode
+        self.ui.listView.setSelectionMode(QListView.SelectionMode.SingleSelection)
+    
+    def load_images(self):
+        """Load images from facedetect/output_images folder - only Unknown_ prefixed images"""
+        folder_path = "facedetect/output_images"
+        
+        # Check if folder exists
+        if not os.path.exists(folder_path):
+            print(f"Folder '{folder_path}' does not exist!")
+            return
+        
+        # Clear existing items
+        self.model.clear()
+        
+        # Supported image formats
+        supported_formats = ('.png', '.jpg', '.jpeg', '.bmp', '.tiff', '.gif')
+        
+        # Get only image files with "Unknown_" prefix (case-insensitive)
+        image_files = []
+        for file in os.listdir(folder_path):
+            if (file.lower().endswith(supported_formats) and 
+                file.startswith("Unknown_")):
+                image_files.append(file)
+        
+        # Sort files alphabetically
+        image_files.sort(key=lambda x: x.lower())
+        
+        # Add images to the list widget
+        for filename in image_files:
+            file_path = os.path.join(folder_path, filename)
+            self.add_image_item(file_path, filename)
+        
+        print(f"Loaded {len(image_files)} Unknown images from {folder_path}")
+    
+    def add_image_item(self, image_path, filename):
+        """Add an image item to the QListView"""
+        # Load and scale the image
+        pixmap = QPixmap(image_path)
+        if not pixmap.isNull():
+            # Scale image to fit icon size while maintaining aspect ratio
+            icon_size = self.ui.listView.iconSize()
+            scaled_pixmap = pixmap.scaled(
+                icon_size.width(), 
+                icon_size.height(), 
+                Qt.KeepAspectRatio, 
+                Qt.SmoothTransformation
+            )
+            
+            # Create QStandardItem
+            item = QStandardItem()
+            item.setIcon(QIcon(scaled_pixmap))
+            item.setText(filename)
+            
+            # Store the full file path in the item data for later use
+            item.setData(image_path, Qt.UserRole)
+            
+            # Make item non-editable
+            item.setEditable(False)
+            
+            # Add item to model
+            self.model.appendRow(item)
+        else:
+            print(f"Failed to load image: {image_path}")
+    
+    def refresh_images(self):
+        """Refresh the image list (useful if images are added/removed)"""
+        self.load_images()
+    
+    def get_selected_image_path(self):
+        """Get the file path of the currently selected image"""
+        current_index = self.ui.listView.currentIndex()
+        if current_index.isValid():
+            item = self.model.itemFromIndex(current_index)
+            return item.data(Qt.UserRole)
+        return None
+    
+    def on_image_selection_changed(self):
+        """Handle image selection change (connect this to itemSelectionChanged signal if needed)"""
+        selected_path = self.get_selected_image_path()
+        if selected_path:
+            print(f"Selected image: {selected_path}")
+    
+    def back_action(self):
+        """Handle back button press"""
+        print("Back button pressed")
+        widget.setCurrentIndex(widget.currentIndex() - 6)
+        
 # the solvent data ...
 header = ['No','Nama', ' Tanggal/Waktu', ' Aktivitas']
 # use numbers for numeric data to sort properly
@@ -584,13 +968,17 @@ if __name__ == "__main__":
     password=Password()
     log=LogWindow()
     hapusdata=Hapusdata()
+    deteksi=Deteksi()
+    capture=ImageGallery()
     widget.addWidget(mainwindow)
     widget.addWidget(mainmenu)
     widget.addWidget(password)
     widget.addWidget(tambahdata)
     widget.addWidget(log)
     widget.addWidget(hapusdata)
+    widget.addWidget(deteksi)
+    widget.addWidget(capture)
     # widget = MainWindow()
-    # widget.show()
-    widget.showFullScreen()
+    widget.show()
+    # widget.showFullScreen()
     sys.exit(app.exec())

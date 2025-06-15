@@ -5,6 +5,7 @@ from pathlib import Path
 import os
 from datetime import datetime
 import xml.etree.ElementTree as ET
+from PySide6.QtWidgets import QMessageBox
 
 
 import face_recognition
@@ -51,7 +52,7 @@ def encode_known_faces(
     encodings = []
 
     print("start encoding faces")
-    for filepath in Path("training").glob("*/*"):
+    for filepath in Path("facedetect/training").glob("*/*"):
         name = filepath.parent.name
         image = face_recognition.load_image_file(filepath)
 
@@ -128,9 +129,11 @@ def recognize_faces(
         if not name:
             name = "Unknown"
             print("wajah tidak dikenali")
+            # QMessageBox.information("Gagal", "wajah tidak dikenali, brankas tetap tertutup")
             act = "gagal"
         else:
             print("wajah dikenali, membuka brankas")
+            # QMessageBox.information("Gagal", "wajah tidak dikenali, brankas tetap tertutup")
             act = "berhasil"
             #todo: open safe when face is recognized
         _display_face(draw, bounding_box, name)
