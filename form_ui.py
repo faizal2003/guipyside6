@@ -32,7 +32,8 @@ class Ui_MainWindow(object):
         self.frame.setObjectName(u"frame")
         self.frame.setGeometry(QRect(130, 100, 761, 201))
         self.frame.setStyleSheet(u"background-image: url(:/bg/MONITORING KUNCI BRANKAS.png);\n"
-"background-repeat: false;")
+"background-repeat:false;\n"
+"border-radius: 10;")
         self.frame.setFrameShape(QFrame.Shape.StyledPanel)
         self.frame.setFrameShadow(QFrame.Shadow.Raised)
         self.pushButton = QPushButton(self.centralwidget)

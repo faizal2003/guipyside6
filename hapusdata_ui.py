@@ -40,7 +40,9 @@ class Ui_HapusData(object):
         self.frame = QFrame(self.centralwidget)
         self.frame.setObjectName(u"frame")
         self.frame.setGeometry(QRect(410, 20, 191, 191))
-        self.frame.setStyleSheet(u"background-image: url(:/menu/Group 4.png);")
+        self.frame.setStyleSheet(u"background-image: url(:/menu/Group 4.png);\n"
+"background-repeat:false;\n"
+"border-radius: 10;")
         self.frame.setFrameShape(QFrame.Shape.StyledPanel)
         self.frame.setFrameShadow(QFrame.Shadow.Raised)
         self.label = QLabel(self.centralwidget)

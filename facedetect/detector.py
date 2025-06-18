@@ -268,8 +268,10 @@ def recognize_faces(
     os.makedirs(save_dir, exist_ok=True)
     filename = f"{base_name}_{timestamp}.jpg"
     save_path = os.path.join(save_dir, filename)
+    save_pre= os.path.join("img_preview", "preview.jpg")
 
     pillow_image.save(save_path)
+    pillow_image.save(save_pre)
     print(f"Saved image to {save_path}")
     log_to_xml(
         name=base_name,

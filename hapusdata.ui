@@ -66,7 +66,9 @@
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">background-image: url(:/menu/Group 4.png);</string>
+     <string notr="true">background-image: url(:/menu/Group 4.png);
+background-repeat:false;
+border-radius: 10;</string>
     </property>
     <property name="frameShape">
      <enum>QFrame::Shape::StyledPanel</enum>

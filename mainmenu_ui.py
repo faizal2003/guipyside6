@@ -71,7 +71,7 @@ class Ui_MainMenu(object):
         MainMenu.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(MainMenu)
         self.menubar.setObjectName(u"menubar")
-        self.menubar.setGeometry(QRect(0, 0, 1024, 21))
+        self.menubar.setGeometry(QRect(0, 0, 1024, 23))
         MainMenu.setMenuBar(self.menubar)
         self.statusbar = QStatusBar(MainMenu)
         self.statusbar.setObjectName(u"statusbar")
