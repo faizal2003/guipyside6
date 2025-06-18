@@ -32,7 +32,7 @@ class Ui_Deteksi(object):
         self.label.setObjectName(u"label")
         self.label.setGeometry(QRect(140, 40, 721, 391))
         self.label.setStyleSheet(u"color: rgb(237, 51, 59);\n"
-"background-color: rgb(237, 51, 59);")
+"background-color: rgb(255, 255, 255);")
         self.pushButton = QPushButton(self.centralwidget)
         self.pushButton.setObjectName(u"pushButton")
         self.pushButton.setGeometry(QRect(380, 460, 251, 71))

@@ -960,6 +960,11 @@ header = ['No','Nama', ' Tanggal/Waktu', ' Aktivitas']
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
+    app.setStyleSheet("""
+        * {
+            color: white;
+        }
+    """)
     widget=QStackedWidget()
     mainwindow=MainWindow()
     mainmenu=SecondWindow()

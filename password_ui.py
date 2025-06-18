@@ -40,6 +40,7 @@ class Ui_Password(object):
         self.label.setObjectName(u"label")
         self.label.setGeometry(QRect(340, 180, 341, 61))
         self.label.setStyleSheet(u"background-image: url(:/password/Password.png);\n"
+"color: rgb(255, 255, 255);\n"
 "background-repea: false;")
         self.pushButton_2 = QPushButton(self.centralwidget)
         self.pushButton_2.setObjectName(u"pushButton_2")
@@ -50,11 +51,12 @@ class Ui_Password(object):
         self.lineEdit = QLineEdit(self.centralwidget)
         self.lineEdit.setObjectName(u"lineEdit")
         self.lineEdit.setGeometry(QRect(280, 300, 491, 51))
-        self.lineEdit.setStyleSheet(u"background-color: rgb(170, 0, 0);")
+        self.lineEdit.setStyleSheet(u"background-color: rgb(170, 0, 0);\n"
+"color: rgb(255, 255, 255);")
         Password.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(Password)
         self.menubar.setObjectName(u"menubar")
-        self.menubar.setGeometry(QRect(0, 0, 1024, 21))
+        self.menubar.setGeometry(QRect(0, 0, 1024, 23))
         Password.setMenuBar(self.menubar)
         self.statusbar = QStatusBar(Password)
         self.statusbar.setObjectName(u"statusbar")
