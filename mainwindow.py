@@ -4,6 +4,7 @@ import os
 from datetime import datetime
 import sys
 import ui_src
+import time
 import xml.etree.ElementTree as ET
 from PySide6.QtCore import *
 from PySide6.QtGui import *
@@ -33,6 +34,8 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'facedetect'))
 # Now you can import detector
 import detector
 
+name = None
+aksi = None
 
 class MainWindow(QMainWindow):
     def __init__(self, parent=None):
@@ -54,57 +57,7 @@ class MainWindow(QMainWindow):
         print("button detek pressed")
         widget.setCurrentIndex(widget.currentIndex() + 6)
         print(widget.currentIndex())          
-    # def testimg(self):
-    #     print("button img pressed")
         
-    #     # Create facedetect/targetface folder if it doesn't exist
-    #     folder_name = os.path.join("facedetect", "targetface")
-    #     if not os.path.exists(folder_name):
-    #         os.makedirs(folder_name)
-    #         print(f"Created folder: {folder_name}")
-        
-    #     # Initialize camera
-    #     cap = cv2.VideoCapture(0)  # 0 for default camera
-        
-    #     if not cap.isOpened():
-    #         print("Error: Could not open camera")
-    #         QMessageBox.warning(self, "Camera Error", "Could not access camera!")
-    #         return
-        
-    #     try:
-    #         # Capture frame
-    #         ret, frame = cap.read()
-            
-    #         if ret:
-    #             # Fixed filename that will be overwritten each time
-    #             filename = "target_image.jpg"
-    #             filepath = os.path.join(folder_name, filename)
-                
-    #             # Save the image
-    #             success = cv2.imwrite(filepath, frame)
-                
-    #             if success:
-    #                 print(f"Image saved successfully: {filepath}")
-    #                 # QMessageBox.information(self, "Success", f"Image saved to {filepath}")
-    #             else:
-    #                 print("Error: Failed to save image")
-    #                 QMessageBox.warning(self, "Save Error", "Failed to save image!")
-    #         else:
-    #             print("Error: Failed to capture image")
-    #             QMessageBox.warning(self, "Capture Error", "Failed to capture image from camera!")
-                
-    #     except Exception as e:
-    #         print(f"Error during image capture: {str(e)}")
-    #         QMessageBox.critical(self, "Error", f"An error occurred: {str(e)}")
-            
-    #     finally:
-    #         # Always release the camera
-    #         cap.release()
-    #         print("Camera released")
-            
-    #     detector.recognize_faces(image_location=filepath)
-    #     print("Face recognition completed")
-
 class SecondWindow(QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -591,6 +544,8 @@ class Deteksi(QMainWindow):
     
     def deteksi_action(self):
         """Save current frame when detection button is pressed"""
+        
+        global name, aksi
         print("Deteksi button pressed")
         
         if self.captured_frame is None:
@@ -605,7 +560,7 @@ class Deteksi(QMainWindow):
             if success:
                 QMessageBox.information(self, "Success", f"Target image saved successfully!\nLocation: {target_path}")
                 print(f"Image saved successfully to {target_path}")
-                detector.recognize_faces(image_location=target_path)
+                name, aksi = detector.recognize_faces(image_location=target_path)
                 
                 # Optional: Show captured image briefly
                 self.is_capturing = False  # Stop live feed temporarily
@@ -623,6 +578,8 @@ class Deteksi(QMainWindow):
                 widget.setCurrentIndex(widget.currentIndex() + 2 )
                 # Resume live feed after 2 seconds
                 # QTimer.singleShot(2000, self.resume_live_feed)
+                
+                widget.setCurrentIndex(widget.currentIndex() + 8)  # Move to Preview window
                 
                 
             else:
@@ -998,8 +955,8 @@ class Preview(QMainWindow):
     def setup_placeholders(self):
         """Setup placeholder text for name and status labels"""
         # Get fresh data here - replace with your actual data source
-        current_name = "teasst"#self.get_current_name()  # Your method to get current name
-        current_status = "berhasil"#self.get_current_status()  # Your method to get current status
+        current_name = name #self.get_current_name()  # Your method to get current name
+        current_status = aksi #self.get_current_status()  # Your method to get current status
         
         if hasattr(self.ui, 'Nama_dt'):
             if current_name:
@@ -1020,6 +977,8 @@ class Preview(QMainWindow):
             else:
                 self.ui.Status_dt.setText("No status set")
                 self.ui.Status_dt.setStyleSheet("color: #888888; font-style: italic;")
+        time.sleep(5)  # Optional delay for smoother UI updates
+        widget.setCurrentIndex(widget.currentIndex() + 6)
     
     def get_current_name(self):
         """Get the current name from your data source"""

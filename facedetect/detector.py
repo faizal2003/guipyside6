@@ -2,7 +2,7 @@ import argparse
 import pickle
 from collections import Counter
 from pathlib import Path
-# import RPi.GPIO as GPIO
+import RPi.GPIO as GPIO
 import time
 import signal
 import sys
@@ -18,6 +18,7 @@ from PIL import Image, ImageDraw
 DEFAULT_ENCODINGS_PATH = Path("facedetect/output/encodings.pkl")
 BOUNDING_BOX_COLOR = "blue"
 TEXT_COLOR = "white"
+aksi = "tidak ada aksi"
 
 # Create directories if they don't already exist
 Path("training").mkdir(exist_ok=True)
@@ -73,84 +74,84 @@ def encode_known_faces(
     print("finished encoding faces")
     isComplete = True
     
-# RELAY_PINS = [17, 27]  # GPIO pins connected to relays
-# RELAY_ACTIVE_LOW = True  # Set to False if relays are active high
+RELAY_PINS = [17, 27]  # GPIO pins connected to relays
+RELAY_ACTIVE_LOW = True  # Set to False if relays are active high
 
-# class DualRelayController:
-#     def __init__(self, pins, active_low=True):
-#         self.pins = pins
-#         self.active_low = active_low
-#         self.setup_gpio()
+class DualRelayController:
+    def __init__(self, pins, active_low=True):
+        self.pins = pins
+        self.active_low = active_low
+        self.setup_gpio()
         
-#     def setup_gpio(self):
-#         """Initialize GPIO settings"""
-#         GPIO.setmode(GPIO.BCM)
-#         for pin in self.pins:
-#             GPIO.setup(pin, GPIO.OUT)
-#         # Initialize both relays to OFF state
-#         self.all_relays_off()
+    def setup_gpio(self):
+        """Initialize GPIO settings"""
+        GPIO.setmode(GPIO.BCM)
+        for pin in self.pins:
+            GPIO.setup(pin, GPIO.OUT)
+        # Initialize both relays to OFF state
+        self.all_relays_off()
         
-#     def relay_on(self, relay_num):
-#         """Turn specific relay ON (1 or 2)"""
-#         if relay_num < 1 or relay_num > len(self.pins):
-#             print(f"Invalid relay number. Use 1-{len(self.pins)}")
-#             return
+    def relay_on(self, relay_num):
+        """Turn specific relay ON (1 or 2)"""
+        if relay_num < 1 or relay_num > len(self.pins):
+            print(f"Invalid relay number. Use 1-{len(self.pins)}")
+            return
             
-#         pin = self.pins[relay_num - 1]
-#         if self.active_low:
-#             GPIO.output(pin, GPIO.LOW)
-#         else:
-#             GPIO.output(pin, GPIO.HIGH)
-#         print(f"Relay {relay_num} (GPIO {pin}) ON")
+        pin = self.pins[relay_num - 1]
+        if self.active_low:
+            GPIO.output(pin, GPIO.LOW)
+        else:
+            GPIO.output(pin, GPIO.HIGH)
+        print(f"Relay {relay_num} (GPIO {pin}) ON")
         
-#     def relay_off(self, relay_num):
-#         """Turn specific relay OFF (1 or 2)"""
-#         if relay_num < 1 or relay_num > len(self.pins):
-#             print(f"Invalid relay number. Use 1-{len(self.pins)}")
-#             return
+    def relay_off(self, relay_num):
+        """Turn specific relay OFF (1 or 2)"""
+        if relay_num < 1 or relay_num > len(self.pins):
+            print(f"Invalid relay number. Use 1-{len(self.pins)}")
+            return
             
-#         pin = self.pins[relay_num - 1]
-#         if self.active_low:
-#             GPIO.output(pin, GPIO.HIGH)
-#         else:
-#             GPIO.output(pin, GPIO.LOW)
-#         print(f"Relay {relay_num} (GPIO {pin}) OFF")
+        pin = self.pins[relay_num - 1]
+        if self.active_low:
+            GPIO.output(pin, GPIO.HIGH)
+        else:
+            GPIO.output(pin, GPIO.LOW)
+        print(f"Relay {relay_num} (GPIO {pin}) OFF")
         
-#     def relay_toggle(self, relay_num):
-#         """Toggle specific relay state"""
-#         if relay_num < 1 or relay_num > len(self.pins):
-#             print(f"Invalid relay number. Use 1-{len(self.pins)}")
-#             return
+    def relay_toggle(self, relay_num):
+        """Toggle specific relay state"""
+        if relay_num < 1 or relay_num > len(self.pins):
+            print(f"Invalid relay number. Use 1-{len(self.pins)}")
+            return
             
-#         pin = self.pins[relay_num - 1]
-#         current_state = GPIO.input(pin)
-#         if (self.active_low and current_state == GPIO.LOW) or \
-#            (not self.active_low and current_state == GPIO.HIGH):
-#             self.relay_off(relay_num)
-#         else:
-#             self.relay_on(relay_num)
+        pin = self.pins[relay_num - 1]
+        current_state = GPIO.input(pin)
+        if (self.active_low and current_state == GPIO.LOW) or \
+           (not self.active_low and current_state == GPIO.HIGH):
+            self.relay_off(relay_num)
+        else:
+            self.relay_on(relay_num)
             
-#     def all_relays_on(self):
-#         """Turn all relays ON"""
-#         for i in range(len(self.pins)):
-#             self.relay_on(i + 1)
+    def all_relays_on(self):
+        """Turn all relays ON"""
+        for i in range(len(self.pins)):
+            self.relay_on(i + 1)
             
-#     def all_relays_off(self):
-#         """Turn all relays OFF"""
-#         for i in range(len(self.pins)):
-#             self.relay_off(i + 1)
+    def all_relays_off(self):
+        """Turn all relays OFF"""
+        for i in range(len(self.pins)):
+            self.relay_off(i + 1)
             
-#     def cleanup(self):
-#         """Clean up GPIO resources"""
-#         self.all_relays_off()
-#         GPIO.cleanup()
-#         print("GPIO cleanup completed")
+    def cleanup(self):
+        """Clean up GPIO resources"""
+        self.all_relays_off()
+        GPIO.cleanup()
+        print("GPIO cleanup completed")
 
-# def signal_handler(sig, frame):
-#     """Handle Ctrl+C gracefully"""
-#     print("\nShutting down...")
-#     relay.cleanup()
-#     sys.exit(0)
+def signal_handler(sig, frame):
+    """Handle Ctrl+C gracefully"""
+    print("\nShutting down...")
+    relay.cleanup()
+    sys.exit(0)
 
 
 def recognize_faces(
@@ -165,11 +166,11 @@ def recognize_faces(
     
     global relay
     
-    # # Set up signal handler for graceful shutdown
-    # signal.signal(signal.SIGINT, signal_handler)
+    # Set up signal handler for graceful shutdown
+    signal.signal(signal.SIGINT, signal_handler)
     
-    # # Initialize dual relay controller
-    # relay = DualRelayController(RELAY_PINS, RELAY_ACTIVE_LOW)
+    # Initialize dual relay controller
+    relay = DualRelayController(RELAY_PINS, RELAY_ACTIVE_LOW)
     
     with encodings_location.open(mode="rb") as f:
         loaded_encodings = pickle.load(f)
@@ -193,7 +194,7 @@ def recognize_faces(
         if not name:
             name = "Unknown"
             print("wajah tidak dikenali")
-        _display_face(draw, bounding_box, name)
+        # _display_face(draw, bounding_box, name)
 
     del draw
     # pillow_image.show()
@@ -224,28 +225,30 @@ def recognize_faces(
             print("wajah tidak dikenali")
             # QMessageBox.information("Gagal", "wajah tidak dikenali, brankas tetap tertutup")
             act = "gagal"
-            # relay.relay_on(2)
-            # time.sleep(2)
-            # relay.relay_off(2)
-            # time.sleep(2)
-            # relay.relay_on(2)
-            # time.sleep(2)
-            # relay.relay_off(2)
-            # time.sleep(2)
-            # relay.relay_on(2)
-            # time.sleep(2)
-            # relay.relay_off(2)
-            # time.sleep(2)
+            aksi = "gagal"
+            relay.relay_on(2)
+            time.sleep(2)
+            relay.relay_off(2)
+            time.sleep(2)
+            relay.relay_on(2)
+            time.sleep(2)
+            relay.relay_off(2)
+            time.sleep(2)
+            relay.relay_on(2)
+            time.sleep(2)
+            relay.relay_off(2)
+            time.sleep(2)
         else:
             print("wajah dikenali, membuka brankas")
             # QMessageBox.information("Gagal", "wajah tidak dikenali, brankas tetap tertutup")
             act = "berhasil"
-            # relay.relay_on(1)
-            # time.sleep(5)
-            # relay.relay_off(1)
+            aksi = "berhasil"
+            relay.relay_on(1)
+            time.sleep(5)
+            relay.relay_off(1)
             #todo: open safe when face is recognized
-        _display_face(draw, bounding_box, name)
-        recognized_names.add(name)
+            _display_face(draw, bounding_box, name)
+            recognized_names.add(name)
 
     del draw
     # pillow_image.show()
@@ -279,6 +282,7 @@ def recognize_faces(
         aktivitas=act)
     
     act = ""
+    return aksi, name
     
 
 def _recognize_face(unknown_encoding, loaded_encodings):
