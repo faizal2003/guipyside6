@@ -2,6 +2,7 @@
     <qresource prefix="/bg">
         <file>START 1.png</file>
         <file>MONITORING KUNCI BRANKAS.png</file>
+        <file>Group 42.png</file>
     </qresource>
     <qresource prefix="/tambahdata">
         <file>Group 3tambahdata.png</file>
@@ -18,6 +19,9 @@
         <file>START2.png</file>
         <file>sutdonrill.png</file>
         <file>startril.png</file>
+        <file>power-button 1.png</file>
+        <file>Group 22.png</file>
+        <file>Group 1 (32).png</file>
     </qresource>
     <qresource prefix="/menu">
         <file>Group 2.png</file>

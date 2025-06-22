@@ -32,7 +32,7 @@ class Ui_Deteksi(object):
         self.label.setObjectName(u"label")
         self.label.setGeometry(QRect(140, 40, 721, 391))
         self.label.setStyleSheet(u"color: rgb(237, 51, 59);\n"
-"background-color: rgb(237, 51, 59);")
+"background-color: rgb(255, 255, 255);")
         self.pushButton = QPushButton(self.centralwidget)
         self.pushButton.setObjectName(u"pushButton")
         self.pushButton.setGeometry(QRect(380, 460, 251, 71))
@@ -40,10 +40,11 @@ class Ui_Deteksi(object):
         font.setPointSize(20)
         font.setBold(True)
         self.pushButton.setFont(font)
-        self.pushButton.setStyleSheet(u"color: rgb(46, 194, 126);")
+        self.pushButton.setStyleSheet(u"color: rgb(46, 194, 126);\n"
+"background-color: rgb(26, 95, 180);")
         self.pushButton_2 = QPushButton(self.centralwidget)
         self.pushButton_2.setObjectName(u"pushButton_2")
-        self.pushButton_2.setGeometry(QRect(30, 0, 80, 91))
+        self.pushButton_2.setGeometry(QRect(30, 0, 91, 80))
         self.pushButton_2.setStyleSheet(u"background-image: url(:/menu/arrow 1.png);\n"
 "background-repeat:false;\n"
 "border-radius: 10;")

@@ -62,7 +62,8 @@ background-color: rgb(255, 255, 255);</string>
      </font>
     </property>
     <property name="styleSheet">
-     <string notr="true">color: rgb(46, 194, 126);</string>
+     <string notr="true">color: rgb(46, 194, 126);
+background-color: rgb(26, 95, 180);</string>
     </property>
     <property name="text">
      <string>Deteksi</string>

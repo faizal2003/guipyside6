@@ -8,7 +8,7 @@ import xml.etree.ElementTree as ET
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
-from PySide6.QtGui import QPixmap, QIcon
+# from PySide6.QtGui import QPixmap, QIcon
 import operator
 # from facedetect import detector
 
@@ -25,6 +25,7 @@ from ui_log import Ui_Log
 from ui_hapusdata import Ui_HapusData
 from ui_deteksi import Ui_Deteksi
 from ui_capture import Ui_CaptureWindow
+from ui_preview import Ui_Preview
 
 # Add the facedetect folder to Python path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'facedetect'))
@@ -619,8 +620,10 @@ class Deteksi(QMainWindow):
                 scaled_pixmap = pixmap.scaled(self.camera_label.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
                 self.camera_label.setPixmap(scaled_pixmap)
                 
+                widget.setCurrentIndex(widget.currentIndex() + 2 )
                 # Resume live feed after 2 seconds
-                QTimer.singleShot(2000, self.resume_live_feed)
+                # QTimer.singleShot(2000, self.resume_live_feed)
+                
                 
             else:
                 QMessageBox.warning(self, "Error", "Failed to save target image!")
@@ -640,7 +643,7 @@ class Deteksi(QMainWindow):
         print("Back button pressed")
         # Stop camera when leaving the window
         self.cleanup_camera()
-        widget.setCurrentIndex(widget.currentIndex() - 4)
+        widget.setCurrentIndex(widget.currentIndex() - 6)
     
     def cleanup_camera(self):
         """Clean up camera resources"""
@@ -947,6 +950,96 @@ class ImageGallery(QMainWindow):
         print("Back button pressed")
         widget.setCurrentIndex(widget.currentIndex() - 6)
         
+class Preview(QMainWindow):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.ui = Ui_Preview()
+        self.ui.setupUi(self)
+        
+        # Connect existing buttons
+        # self.ui.pushButton.pressed.connect(self.teststart)
+        # self.ui.pushButton_2.pressed.connect(self.testshutdown)
+    
+    def showEvent(self, event):
+        """Override showEvent to refresh content when window is shown"""
+        super().showEvent(event)
+        self.refresh_preview()
+    
+    def refresh_preview(self):
+        """Refresh all preview content"""
+        self.setup_preview_image()
+        self.setup_placeholders()
+        # Add any other refresh logic here
+        print("Preview refreshed!")  # Debug message
+    
+    def setup_preview_image(self):
+        """Load and display the preview image"""
+        image_path = "img_preview/preview.jpg"
+        
+        if os.path.exists(image_path):
+            # Force reload the image from disk
+            pixmap = QPixmap()
+            pixmap.load(image_path)  # This reloads from file
+            
+            # Scale the image to fit the label while maintaining aspect ratio
+            scaled_pixmap = pixmap.scaled(
+                self.ui.preview.size(), 
+                Qt.KeepAspectRatio, 
+                Qt.SmoothTransformation
+            )
+            
+            self.ui.preview.setPixmap(scaled_pixmap)
+            self.ui.preview.setScaledContents(True)
+        else:
+            # Set placeholder text if image not found
+            self.ui.preview.setText("Image not found")
+            self.ui.preview.setStyleSheet("color: red; text-align: center;")
+    
+    def setup_placeholders(self):
+        """Setup placeholder text for name and status labels"""
+        # Get fresh data here - replace with your actual data source
+        current_name = "teasst"#self.get_current_name()  # Your method to get current name
+        current_status = "berhasil"#self.get_current_status()  # Your method to get current status
+        
+        if hasattr(self.ui, 'Nama_dt'):
+            if current_name:
+                self.ui.Nama_dt.setText(current_name)
+                self.ui.Nama_dt.setStyleSheet("color: white; font-style: normal;")
+            else:
+                self.ui.Nama_dt.setText("No name set")
+                self.ui.Nama_dt.setStyleSheet("color: #888888; font-style: italic;")
+        
+        if hasattr(self.ui, 'Status_dt'):
+            if current_status:
+                if current_status.lower() == "berhasil":
+                    self.ui.Status_dt.setText("Terdeteksi, membuka brankas")
+                    self.ui.Status_dt.setStyleSheet("color: green; font-style: normal;")
+                else:
+                    self.ui.Status_dt.setText("gagal, brankas terkunci")
+                    self.ui.Status_dt.setStyleSheet("color: red; font-style: normal;")
+            else:
+                self.ui.Status_dt.setText("No status set")
+                self.ui.Status_dt.setStyleSheet("color: #888888; font-style: italic;")
+    
+    def get_current_name(self):
+        """Get the current name from your data source"""
+        # Replace this with your actual data retrieval logic
+        # For example: return self.parent().current_name if self.parent() else None
+        return "Sample Name"  # Placeholder
+    
+    def get_current_status(self):
+        """Get the current status from your data source"""
+        # Replace this with your actual data retrieval logic
+        # For example: return self.parent().current_status if self.parent() else None
+        return "Active"  # Placeholder
+    
+    def teststart(self):
+        # Your existing test start code
+        pass
+    
+    def testshutdown(self):
+        # Your existing test shutdown code
+        pass
 # the solvent data ...
 header = ['No','Nama', ' Tanggal/Waktu', ' Aktivitas']
 # use numbers for numeric data to sort properly
@@ -974,6 +1067,7 @@ if __name__ == "__main__":
     log=LogWindow()
     hapusdata=Hapusdata()
     deteksi=Deteksi()
+    prev=Preview()
     capture=ImageGallery()
     widget.addWidget(mainwindow)
     widget.addWidget(mainmenu)
@@ -983,6 +1077,7 @@ if __name__ == "__main__":
     widget.addWidget(hapusdata)
     widget.addWidget(deteksi)
     widget.addWidget(capture)
+    widget.addWidget(prev)
     # widget = MainWindow()
     widget.show()
     # widget.showFullScreen()

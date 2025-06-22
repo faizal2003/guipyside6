@@ -40,7 +40,8 @@ class Ui_Deteksi(object):
         font.setPointSize(20)
         font.setBold(True)
         self.pushButton.setFont(font)
-        self.pushButton.setStyleSheet(u"color: rgb(46, 194, 126);")
+        self.pushButton.setStyleSheet(u"color: rgb(46, 194, 126);\n"
+"background-color: rgb(26, 95, 180);")
         self.pushButton_2 = QPushButton(self.centralwidget)
         self.pushButton_2.setObjectName(u"pushButton_2")
         self.pushButton_2.setGeometry(QRect(30, 0, 91, 80))
