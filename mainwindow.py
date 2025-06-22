@@ -560,7 +560,7 @@ class Deteksi(QMainWindow):
             if success:
                 QMessageBox.information(self, "Success", f"Target image saved successfully!\nLocation: {target_path}")
                 print(f"Image saved successfully to {target_path}")
-                name, aksi = detector.recognize_faces(image_location=target_path)
+                aksi, name = detector.recognize_faces(image_location=target_path)
                 
                 # Optional: Show captured image briefly
                 self.is_capturing = False  # Stop live feed temporarily
@@ -957,6 +957,8 @@ class Preview(QMainWindow):
         # Get fresh data here - replace with your actual data source
         current_name = name #self.get_current_name()  # Your method to get current name
         current_status = aksi #self.get_current_status()  # Your method to get current status
+        print(name)
+        print(aksi)
         
         if hasattr(self.ui, 'Nama_dt'):
             if current_name:
@@ -974,11 +976,17 @@ class Preview(QMainWindow):
                 else:
                     self.ui.Status_dt.setText("gagal, brankas terkunci")
                     self.ui.Status_dt.setStyleSheet("color: red; font-style: normal;")
+                    self.send_telegram_notification(current_name, current_status)
             else:
                 self.ui.Status_dt.setText("No status set")
                 self.ui.Status_dt.setStyleSheet("color: #888888; font-style: italic;")
-        time.sleep(5)  # Optional delay for smoother UI updates
-        widget.setCurrentIndex(widget.currentIndex() + 6)
+        
+        # Use QTimer for non-blocking delay instead of time.sleep()
+        QTimer.singleShot(5000, self.return_to_detection)  # 5000ms = 5 seconds
+    
+    def return_to_detection(self):
+        """Return to detection window after delay"""
+        widget.setCurrentIndex(6)  # Go specifically to index 6 (detection window)
     
     def get_current_name(self):
         """Get the current name from your data source"""
@@ -991,6 +999,42 @@ class Preview(QMainWindow):
         # Replace this with your actual data retrieval logic
         # For example: return self.parent().current_status if self.parent() else None
         return "Active"  # Placeholder
+    
+    def send_telegram_notification(self, name, status):
+        """Send Telegram notification for failed access attempt"""
+        try:
+            import requests
+            from datetime import datetime
+            
+            # Your Telegram Bot Token and Chat ID
+            BOT_TOKEN = "7549815599:AAEMtGbvEpTef4lOLg2_x8FYhaPvMbna9Y4"  # Replace with your actual bot token
+            CHAT_ID = "1084665313"     # Replace with your actual chat ID
+            
+            # Create message
+            timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            message = f"🚨 AKSES GAGAL TERDETEKSI 🚨\n\n"
+            message += f"📅 Waktu: {timestamp}\n"
+            message += f"👤 Nama: {name if name else 'Unknown'}\n"
+            message += f"🔐 Status: {status}\n"
+            message += f"⚠️ Brankas tetap terkunci untuk keamanan"
+            
+            # Send message
+            url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
+            data = {
+                'chat_id': CHAT_ID,
+                'text': message,
+                'parse_mode': 'HTML'
+            }
+            
+            response = requests.post(url, data=data, timeout=5)
+            
+            if response.status_code == 200:
+                print("Telegram notification sent successfully")
+            else:
+                print(f"Failed to send Telegram notification: {response.status_code}")
+                
+        except Exception as e:
+            print(f"Error sending Telegram notification: {e}")        
     
     def teststart(self):
         # Your existing test start code
