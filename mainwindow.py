@@ -75,7 +75,7 @@ class SecondWindow(QMainWindow):
         print(widget.currentIndex())
     def hapusdata_action(self):
         print("button delete pressed")
-        widget.setCurrentIndex(widget.currentIndex() + 4 )
+        widget.setCurrentIndex(widget.currentIndex() + 1 )
         print(widget.currentIndex())
     def logbutton_action(self):
         print("button log pressed")
@@ -346,6 +346,11 @@ class Password(QMainWindow):
             widget.setCurrentIndex(widget.currentIndex() + 1)
         else:
             print("Password is incorrect")
+            
+        if self.ui.lineEdit.text() == "1234":
+            print("Password is correct")
+            self.ui.lineEdit.clear()
+            widget.setCurrentIndex(widget.currentIndex() + 3)            
     
     def back_action(self):
         print("button start pressed")

@@ -4,8 +4,8 @@ facedetect/output_images/*
 facedetect/output/*
 facedetect/validation/*
 facedetect/image/*
-facedetect/__pycache__/
-__pycache__/
+facedetect/__pycache__/*
+__pycache__/*
 output/
 output_images/
 training/
