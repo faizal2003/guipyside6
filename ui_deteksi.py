@@ -35,7 +35,7 @@ class Ui_Deteksi(object):
 "background-color: rgb(255, 255, 255);")
         self.pushButton = QPushButton(self.centralwidget)
         self.pushButton.setObjectName(u"pushButton")
-        self.pushButton.setGeometry(QRect(380, 460, 251, 71))
+        self.pushButton.setGeometry(QRect(720, 460, 251, 71))
         font = QFont()
         font.setPointSize(20)
         font.setBold(True)
@@ -48,6 +48,12 @@ class Ui_Deteksi(object):
         self.pushButton_2.setStyleSheet(u"background-image: url(:/menu/arrow 1.png);\n"
 "background-repeat:false;\n"
 "border-radius: 10;")
+        self.pushButton_3 = QPushButton(self.centralwidget)
+        self.pushButton_3.setObjectName(u"pushButton_3")
+        self.pushButton_3.setGeometry(QRect(60, 460, 251, 71))
+        self.pushButton_3.setFont(font)
+        self.pushButton_3.setStyleSheet(u"color: rgb(46, 194, 126);\n"
+"background-color: rgb(26, 95, 180);")
         Deteksi.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(Deteksi)
         self.menubar.setObjectName(u"menubar")
@@ -67,5 +73,6 @@ class Ui_Deteksi(object):
         self.label.setText("")
         self.pushButton.setText(QCoreApplication.translate("Deteksi", u"Deteksi", None))
         self.pushButton_2.setText("")
+        self.pushButton_3.setText(QCoreApplication.translate("Deteksi", u"PIN", None))
     # retranslateUi
 
