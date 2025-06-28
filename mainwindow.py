@@ -350,8 +350,19 @@ class Password(QMainWindow):
         if self.ui.lineEdit.text() == "1234":
             print("Password is correct")
             self.ui.lineEdit.clear()
-            widget.setCurrentIndex(widget.currentIndex() + 3)            
+            widget.setCurrentIndex(widget.currentIndex() + 3)      
+        
+        if self.ui.lineEdit.text() == "4444":
+            print("Password is correct")
+            self.ui.lineEdit.clear()
+            QMessageBox.information(self, "Info", "Membuka brankas")
+            QTimer.singleShot(5000, self.return_to_detection)
+            widget.setCurrentIndex(widget.currentIndex() + 3)   
     
+    def return_to_detection(self):
+        print("Returning to detection window")
+        widget.setCurrentIndex(6)
+        
     def back_action(self):
         print("button start pressed")
         widget.setCurrentIndex(widget.currentIndex() - 1)
@@ -402,6 +413,7 @@ class Deteksi(QMainWindow):
         
         # Connect buttons
         self.ui.pushButton_2.pressed.connect(self.back_action)
+        self.ui.pushButton_3.pressed.connect(self.open_pin)
         self.ui.pushButton.pressed.connect(self.deteksi_action)  # Detection button
         
         # Camera setup
@@ -599,6 +611,11 @@ class Deteksi(QMainWindow):
         """Resume live camera feed"""
         self.is_capturing = True
         print("Resumed live camera feed")
+        
+    def open_pin(self):
+        """Open password window"""
+        print("Open password window")
+        widget.setCurrentIndex(2)
     
     def back_action(self):
         """Handle back button press"""

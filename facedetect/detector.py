@@ -341,7 +341,14 @@ def recognize_faces(
     return aksi, name
 
 
-    
+def open_safe():
+    """
+    Opens the safe by activating the relay for a specified duration.
+    """
+    relay.relay_on(1)  # Activate relay 1 to open the safe
+    time.sleep(5)  # Keep it open for 5 seconds
+    relay.relay_off(1)  # Deactivate relay 1 to close the safe
+    print("Safe opened for 5 seconds")
 
 def _recognize_face(unknown_encoding, loaded_encodings):
     face_distances = face_recognition.face_distance(
