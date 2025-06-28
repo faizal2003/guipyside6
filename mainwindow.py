@@ -355,9 +355,10 @@ class Password(QMainWindow):
         if self.ui.lineEdit.text() == "4444":
             print("Password is correct")
             self.ui.lineEdit.clear()
+            detector.open_safe()
             QMessageBox.information(self, "Info", "Membuka brankas")
             QTimer.singleShot(5000, self.return_to_detection)
-            widget.setCurrentIndex(widget.currentIndex() + 3)   
+            # widget.setCurrentIndex(widget.currentIndex() + 3)   
     
     def return_to_detection(self):
         print("Returning to detection window")

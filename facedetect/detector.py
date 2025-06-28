@@ -260,7 +260,6 @@ def recognize_faces(
             # QMessageBox.information("Gagal", "wajah tidak dikenali, brankas tetap tertutup")
             act = "gagal"
             aksi = "gagal"
-            aksi = "gagal"
             relay.relay_on(2)
             time.sleep(2)
             relay.relay_off(2)
@@ -278,7 +277,6 @@ def recognize_faces(
                 print("wajah tidak dikenali")
                 # QMessageBox.information("Gagal", "wajah tidak dikenali, brankas tetap tertutup")
                 act = "gagal"
-                aksi = "gagal"
                 aksi = "gagal"
                 relay.relay_on(2)
                 time.sleep(2)
